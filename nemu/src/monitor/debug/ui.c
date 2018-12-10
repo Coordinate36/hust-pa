@@ -36,6 +36,22 @@ static int cmd_q(char *args) {
   return -1;
 }
 
+static int cmd_si(char *args) {
+  int n = atoi(args);
+  cpu_exec(n);
+  return 0;
+}
+
+static int cmd_info(char *args) {
+  static const char* regs[] = {"eax", "ecx", "edx", "ebx", "esp", "ebp", "esi", "edi"};
+  
+  int i;
+  for (i = R_EAX; i < R_EDI; i++) {
+    printf("%s\t%x\t%d\n", regs[i], cpu.gpr[i]._32, cpu.gpr[i]._32);
+  }
+  return 0;
+}
+
 static int cmd_help(char *args);
 
 static struct {
@@ -48,7 +64,12 @@ static struct {
   { "q", "Exit NEMU", cmd_q },
 
   /* TODO: Add more commands */
-
+  { "si", "Single step execution", cmd_si },
+  { "info", "Print program status", cmd_info},
+  { "p", "Eval the expression", NULL},
+  { "x", "Scan memory", NULL},
+  { "w", "Set monitoring points", NULL},
+  { "d", "Delete monitoring points", NULL}
 };
 
 #define NR_CMD (sizeof(cmd_table) / sizeof(cmd_table[0]))
