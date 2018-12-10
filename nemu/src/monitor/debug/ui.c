@@ -43,14 +43,14 @@ static int cmd_si(char *args) {
 }
 
 static int cmd_x(char *args) {
-  char *num = strtok(args, " ");
-  uint32_t n = atoi(num);
-  uint32_t addr = atoi(num + strlen(num) +1);
-  printf("%x: ", addr);
+  uint32_t n;
+  uint32_t addr;
+  sscanf(args, "%d%x", &n, &addr);
   int i;
   for (i = 0; i < n; i++) {
-    printf("%x\t", pmem[addr+i]);
+    printf("0x%x\t", pmem[addr+i]);
   }
+  puts("");
   return 0;
 }
 
