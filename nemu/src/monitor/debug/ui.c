@@ -42,6 +42,18 @@ static int cmd_si(char *args) {
   return 0;
 }
 
+static int cmd_x(char *args) {
+  char *num = strtok(args, " ");
+  uint32_t n = atoi(num);
+  uint32_t addr = atoi(num + strlen(num) +1);
+  printf("%x: ", addr);
+  int i;
+  for (i = 0; i < n; i++) {
+    printf("%x\t", pmem[addr+i]);
+  }
+  return 0;
+}
+
 static int cmd_info(char *args) {
   static const char* regs[] = {"eax", "ecx", "edx", "ebx", "esp", "ebp", "esi", "edi"};
   
@@ -67,7 +79,7 @@ static struct {
   { "si", "Single step execution", cmd_si },
   { "info", "Print program status", cmd_info},
   { "p", "Eval the expression", NULL},
-  { "x", "Scan memory", NULL},
+  { "x", "Scan memory", cmd_x},
   { "w", "Set monitoring points", NULL},
   { "d", "Delete monitoring points", NULL}
 };
