@@ -123,6 +123,7 @@ static inline void expr_test() {
     for (j = 0; line[j] != ' '; j++);
     sscanf(line, "%d", &ans);
     rst = expr(line + j + 1, &success);
+    Log("ans: %d rst: %d\n", ans, rst);
     assert(success);
     assert(ans == rst);
   }
