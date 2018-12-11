@@ -7,10 +7,10 @@
 #include <regex.h>
 
 enum {
-  TK_NOTYPE = 256, TK_EQ
+  TK_NOTYPE = 256, TK_EQ,
 
   /* TODO: Add more token types */
-
+  NUMBER
 };
 
 static struct rule {
@@ -24,7 +24,13 @@ static struct rule {
 
   {" +", TK_NOTYPE},    // spaces
   {"\\+", '+'},         // plus
-  {"==", TK_EQ}         // equal
+  {"==", TK_EQ},        // equal
+  {"(", '('},
+  {")", ')'},
+  {"-", '-'},
+  {"\\*", '*'},
+  {"/", '/'},
+  {"\\d+", NUMBER}
 };
 
 #define NR_REGEX (sizeof(rules) / sizeof(rules[0]) )
@@ -80,7 +86,19 @@ static bool make_token(char *e) {
          */
 
         switch (rules[i].token_type) {
-          default: TODO();
+          case NUMBER: {
+            if (substr_len > 32) {
+              printf("The value of number is out of range");
+              return false;
+            }
+            int j;
+            for (j = 0; j < substr_len; j++) {
+              tokens[nr_token].str[j] = substr_start[j];
+            }
+          }
+          default: {
+            tokens[nr_token++].type = rules[i].token_type;
+          }
         }
 
         break;
@@ -96,6 +114,55 @@ static bool make_token(char *e) {
   return true;
 }
 
+uint32_t walk(int* step) {
+  uint32_t rst = 0;
+  uint32_t num = 0, next = 0;
+  int op = '+';
+
+  int i;
+  for (i = *step; i < nr_token; i++) {
+    if (tokens[i].type == NUMBER) {
+      sscanf(tokens[i].str, "%d", &next);
+    } else if (tokens[i].type == '(') {
+      i++;
+      next = walk(&i);
+    } else if (tokens[i].type != TK_NOTYPE) {
+      panic("Invalid token %d next to %c", tokens[i].type, op);
+    }
+    switch (op) {
+      case '+': {
+        rst += num;
+        num = next;
+        break;
+      }
+      case '-': {
+        rst += num;
+        num = -next;
+        break;
+      }
+      case '*': {
+        num *= next;
+        break;
+      }
+      case '/': {
+        num /= next;
+        break;
+      }
+    }
+
+    if (++i < nr_token) {
+      op = tokens[i].type;
+      if (op == ')') {
+        *step = i;
+        break;
+      }
+    }
+  }
+
+  rst += num;
+  return rst;
+}
+
 uint32_t expr(char *e, bool *success) {
   if (!make_token(e)) {
     *success = false;
@@ -103,7 +170,6 @@ uint32_t expr(char *e, bool *success) {
   }
 
   /* TODO: Insert codes to evaluate the expression. */
-  TODO();
-
-  return 0;
+  int step = 0;
+  return walk(&step);
 }

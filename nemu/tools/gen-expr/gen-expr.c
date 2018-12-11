@@ -7,8 +7,63 @@
 
 // this should be enough
 static char buf[65536];
-static inline void gen_rand_expr() {
-  buf[0] = '\0';
+static char ops[] = {'+', '-', '*', '/'};
+
+static inline void gen_rand_num(int begin) {
+  sprintf(buf + begin, "%10d", abs(rand()) + 1);
+}
+
+static inline void gen_rand_op(int begin) {
+  int choice = rand() % 4;
+  buf[begin] = ops[choice];
+}
+
+static inline void gen_rand_expr(int begin) {
+  int choice = rand() % 3;
+  switch (choice) {
+    case 0: {
+      gen_rand_num(begin);
+      break;
+    }
+    case 1: {
+      if (begin >= 60000) {
+        gen_rand_num(begin);
+        break;
+      }
+      
+      buf[begin] = '(';
+      gen_rand_expr(begin + 1);
+      int end = begin + strlen(buf + begin);
+      if (end >= 60000) {
+        buf[begin] = ' ';
+        break;
+      }
+      buf[end++] = ')';
+      buf[end] = '\0';
+      break;
+    }
+    case 2: {
+      if (begin >= 60000) {
+        gen_rand_num(begin);
+        break;
+      }
+      
+      gen_rand_expr(begin);
+      begin += strlen(buf + begin);
+      if (begin >= 60000) {
+        break;
+      }
+      gen_rand_op(begin);
+      if (buf[begin] == '/') {
+        gen_rand_num(begin + 1);
+      } else {
+        gen_rand_expr(begin + 1);
+      }
+      if (begin + strlen(buf + begin) >= 60000) {
+        buf[begin] = '\0';
+      }
+    }
+  }
 }
 
 static char code_buf[65536];
@@ -29,7 +84,7 @@ int main(int argc, char *argv[]) {
   }
   int i;
   for (i = 0; i < loop; i ++) {
-    gen_rand_expr();
+    gen_rand_expr(0);
 
     sprintf(code_buf, code_format, buf);
 

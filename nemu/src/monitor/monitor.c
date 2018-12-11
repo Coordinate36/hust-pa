@@ -1,4 +1,5 @@
 #include "nemu.h"
+#include "monitor/expr.h"
 #include "monitor/monitor.h"
 #include <unistd.h>
 
@@ -102,6 +103,23 @@ static inline void parse_args(int argc, char *argv[]) {
       default:
                 panic("Usage: %s [-b] [-l log_file] [img_file]", argv[0]);
     }
+  }
+}
+
+static inline void test_expr() {
+  FILE* fp = fopen("tools/gen-expr/input", "r");
+  char line[65536];
+  int i;
+  uint32_t ans, rst;
+  bool success;
+  for (i = 0; i < 100; i++) {
+    fgets(line, 65535, fp);
+    int j;
+    for (j = 0; line[j] != ' '; j++);
+    sscanf(line, "%d", &ans);
+    rst = expr(line + j + 1, &success);
+    assert(success);
+    assert(ans == rst);
   }
 }
 
