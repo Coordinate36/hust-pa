@@ -116,7 +116,7 @@ static inline void expr_test() {
     fgets(line, 65535, fp);
     int j;
     for (j = 0; line[j] != '\0'; j++) {
-      if (line[j] == '\n') {
+      if (line[j] == '\n' || line[j] == '\r') {
         line[j] = '\0';
       }
     }
