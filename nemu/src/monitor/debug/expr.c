@@ -118,7 +118,7 @@ static bool make_token(char *e) {
 
 uint32_t walk(int* step) {
   uint32_t rst = 0;
-  uint32_t num = 0, next = 0;
+  int num = 0, next = 0;
   int op = '+';
 
   int i;
