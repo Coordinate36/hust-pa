@@ -123,7 +123,7 @@ uint32_t walk(int* step) {
   int i;
   for (i = *step; i < nr_token; i++) {
     if (tokens[i].type == NUMBER) {
-      sscanf(tokens[i].str, "%d", &next);
+      sscanf(tokens[i].str, "%u", &next);
     } else if (tokens[i].type == '(') {
       i++;
       next = walk(&i);
