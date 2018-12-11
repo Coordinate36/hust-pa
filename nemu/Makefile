@@ -19,7 +19,7 @@ include Makefile.git
 CC = gcc
 LD = gcc
 INCLUDES  = $(addprefix -I, $(INC_DIR))
-CFLAGS   +=  -MMD -Wall -Werror -ggdb3 $(INCLUDES) -fomit-frame-pointer
+CFLAGS   += -O2 -MMD -Wall -Werror -ggdb3 $(INCLUDES) -fomit-frame-pointer
 CFLAGS   += -DDIFF_TEST_QEMU
 
 # Files to be compiled
@@ -50,7 +50,7 @@ NEMU_EXEC := $(BINARY) $(ARGS)
 $(BINARY): $(OBJS)
 	$(call git_commit, "compile")
 	@echo + LD $@
-	@$(LD)  -rdynamic $(SO_LDLAGS) -o $@ $^ -lSDL2 -lreadline -ldl
+	@$(LD) -O2 -rdynamic $(SO_LDLAGS) -o $@ $^ -lSDL2 -lreadline -ldl
 
 run: $(BINARY)
 	$(call git_commit, "run")
