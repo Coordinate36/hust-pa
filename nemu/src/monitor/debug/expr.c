@@ -89,7 +89,7 @@ static bool make_token(char *e) {
           case TK_NOTYPE: break;
           case NUMBER: {
             if (substr_len > 32) {
-              printf("The value of number is out of range");
+              Log("The value of number is out of range");
               return false;
             }
             int j;
