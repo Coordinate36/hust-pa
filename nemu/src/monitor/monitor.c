@@ -106,7 +106,7 @@ static inline void parse_args(int argc, char *argv[]) {
   }
 }
 
-static inline void test_expr() {
+static inline void expr_test() {
   FILE* fp = fopen("tools/gen-expr/input", "r");
   char line[65536];
   int i;
@@ -151,6 +151,8 @@ int init_monitor(int argc, char *argv[]) {
   init_device();
 
   init_difftest(diff_so_file, img_size);
+
+  expr_test();
 
   /* Display welcome message. */
   welcome();
