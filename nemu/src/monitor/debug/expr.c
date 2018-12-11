@@ -86,6 +86,7 @@ static bool make_token(char *e) {
          */
 
         switch (rules[i].token_type) {
+          case TK_NOTYPE: break;
           case NUMBER: {
             if (substr_len > 32) {
               printf("The value of number is out of range");
@@ -126,7 +127,7 @@ uint32_t walk(int* step) {
     } else if (tokens[i].type == '(') {
       i++;
       next = walk(&i);
-    } else if (tokens[i].type != TK_NOTYPE) {
+    } else {
       panic("Invalid token %d next to %c", tokens[i].type, op);
     }
     switch (op) {
