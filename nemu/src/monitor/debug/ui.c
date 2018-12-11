@@ -49,7 +49,7 @@ static int cmd_x(char *args) {
   printf("0x%x: ", addr);
   int i;
   for (i = 0; i < n; i++) {
-    printf("0x%x\t", pmem[addr+i]);
+    printf("0x%x\t", vaddr_read(addr + i, 1));
   }
   puts("");
   return 0;
