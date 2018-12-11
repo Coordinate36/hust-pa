@@ -114,6 +114,7 @@ static inline void expr_test() {
   bool success;
   for (i = 0; i < 100; i++) {
     fgets(line, 65535, fp);
+    line[strlen(line)] = '\0';
     int j;
     for (j = 0; line[j] != ' '; j++);
     sscanf(line, "%d", &ans);
