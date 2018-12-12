@@ -48,7 +48,7 @@ bool is_wp_changed() {
   WP* wp;
   bool success;
   unsigned val;
-  for (wp = head; wp != NULL; wp++) {
+  for (wp = head; wp != NULL; wp = wp->next) {
     val = expr(wp->expr, &success);
     if (val != wp->value) {
       wp->value = val;
