@@ -30,8 +30,8 @@ static struct rule {
   {"-", '-'},
   {"\\*", '*'},
   {"/", '/'},
-  {"[0-9]+", NUMBER},
   {"0x[0-9a-fA-F]+", TK_HEX},
+  {"[0-9]+", NUMBER},
   {"!=", TK_NEQ},
   {"&&", TK_AND},
   {"$[a-z]+", TK_REG}
