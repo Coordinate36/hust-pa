@@ -174,6 +174,22 @@ int make_poland() {
   return poland_len;
 }
 
+int reg_value(char* reg) {
+  int i;
+  for (i = 0; i < 8; i++) {
+    if (strcmp(reg, regsl[i]) == 0) {
+      return reg_l(i);
+    }
+    if (strcmp(reg, regsw[i]) == 0) {
+      return reg_w(i);
+    }
+    if (strcmp(reg, regsb[i]) == 0) {
+      return reg_b(i);
+    }
+  }
+  return -1;
+}
+
 int cal_poland(int poland_len) {
   int top = 0;
   int ans = 0;
@@ -187,12 +203,12 @@ int cal_poland(int poland_len) {
     } else if (poland_output[i].type == TK_HEX) {
       sscanf(poland_output[i].str, "%x", &val);
       num_stack[top++] = val;
+    } else if (poland_output[i].type == TK_REG) {
+      num_stack[top++] = reg_value(poland_output[i].str + 1);
     } else {
       top1 = num_stack[--top];
       if (poland_output[i].type == TK_DEFER) {
         ans = vaddr_read(top1, 4);
-      } else if (poland_output[i].type == TK_REG) {
-        
       } else {
         top2 = num_stack[--top];
         switch (poland_output[i].type) {
