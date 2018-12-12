@@ -190,9 +190,9 @@ int reg_value(char* reg) {
   return -1;
 }
 
-int cal_poland(int poland_len) {
+uint32_t cal_poland(int poland_len) {
   int top = 0;
-  unsigned ans = 0;
+  uint32_t ans = 0;
   int val;
   int top1, top2;
   int i;
