@@ -93,7 +93,7 @@ static int cmd_w(char *args) {
 static int cmd_d(char *args) {
   int n;
   sscanf(args, "%d", &n);
-  free_wp(n);
+  free_wp(n - 1);
   return 0;
 }
 
