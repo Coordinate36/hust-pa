@@ -31,8 +31,9 @@ WP* new_wp() {
   return wp;
 }
 
-void free_wp(WP *wp) {
-  assert(wp != NULL);
+void free_wp(int n) {
+  assert(n >= 0 && n < NR_WP);
+  WP *wp = &wp_pool[n];
   if (wp == head) {
     head = head->next;
   } else {

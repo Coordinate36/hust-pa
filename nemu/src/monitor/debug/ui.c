@@ -59,6 +59,14 @@ static int cmd_x(char *args) {
   return 0;
 }
 
+static int cmd_p(char *args) {
+  bool success;
+  unsigned ans = expr(args, &success);
+  assert(success);
+  printf("%u\n", ans);
+  return 0;
+}
+
 static int cmd_info(char *args) {
   int i;
   for (i = R_EAX; i <= R_EDI; i++) {
@@ -82,6 +90,13 @@ static int cmd_w(char *args) {
   return 0;
 }
 
+static int cmd_d(char *args) {
+  int n;
+  sscanf(args, "%d", &n);
+  free_wp(n);
+  return 0;
+}
+
 static int cmd_help(char *args);
 
 static struct {
@@ -95,11 +110,11 @@ static struct {
 
   /* TODO: Add more commands */
   { "si", "Single step execution", cmd_si },
-  { "info", "Print program status", cmd_info},
-  { "p", "Eval the expression", NULL},
-  { "x", "Scan memory", cmd_x},
-  { "w", "Set monitoring points", cmd_w},
-  { "d", "Delete monitoring points", NULL}
+  { "info", "Print program status", cmd_info },
+  { "p", "Eval the expression", cmd_p },
+  { "x", "Scan memory", cmd_x },
+  { "w", "Set monitoring points", cmd_w },
+  { "d", "Delete monitoring points", cmd_d }
 };
 
 #define NR_CMD (sizeof(cmd_table) / sizeof(cmd_table[0]))
