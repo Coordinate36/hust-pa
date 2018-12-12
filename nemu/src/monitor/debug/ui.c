@@ -73,6 +73,12 @@ static int cmd_info(char *args) {
   return 0;
 }
 
+static int cmd_w(char *args) {
+  WP* wp = new_wp();
+  strcpy(wp->expr, args);
+  return 0;
+}
+
 static int cmd_help(char *args);
 
 static struct {
@@ -89,7 +95,7 @@ static struct {
   { "info", "Print program status", cmd_info},
   { "p", "Eval the expression", NULL},
   { "x", "Scan memory", cmd_x},
-  { "w", "Set monitoring points", NULL},
+  { "w", "Set monitoring points", cmd_w},
   { "d", "Delete monitoring points", NULL}
 };
 
