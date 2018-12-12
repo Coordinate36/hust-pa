@@ -38,7 +38,8 @@ void free_wp(int n) {
     head = head->next;
   } else {
     WP* prior;
-    for (prior = head; prior->next != wp; prior = prior->next);
+    for (prior = head; prior != NULL && prior->next != wp; prior = prior->next);
+    assert(prior != NULL);
     prior->next = wp->next;
   }
   wp->next = free_;
