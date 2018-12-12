@@ -45,7 +45,11 @@ static int cmd_si(char *args) {
 static int cmd_x(char *args) {
   uint32_t n;
   uint32_t addr;
-  sscanf(args, "%d%x", &n, &addr);
+  sscanf(args, "%d", &n);
+  for (; *args != ' '; args++);
+  for (; *args == ' '; args++);
+  bool success;
+  addr = expr(args, &success);
   printf("0x%x: ", addr);
   int i;
   for (i = 0; i < n; i++) {
