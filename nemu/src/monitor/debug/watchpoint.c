@@ -52,8 +52,8 @@ bool is_wp_changed() {
     val = expr(wp->expr, &success);
     if (val != wp->value) {
       wp->value = val;
-      return false;
+      return true;
     }
   }
-  return true;
+  return false;
 }
