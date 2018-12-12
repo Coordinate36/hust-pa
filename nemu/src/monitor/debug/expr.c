@@ -10,7 +10,7 @@ enum {
   TK_NOTYPE = 256, TK_EQ,
 
   /* TODO: Add more token types */
-  NUMBER, TK_HEX, TK_REG, TK_NEQ, TK_AND
+  NUMBER, TK_HEX, TK_REG, TK_NEQ, TK_AND, TK_DEFER
 };
 
 static struct rule {
@@ -31,9 +31,10 @@ static struct rule {
   {"\\*", '*'},
   {"/", '/'},
   {"[0-9]+", NUMBER},
-  {"0x[0-9a-f]+", TK_HEX},
+  {"0x[0-9a-fA-F]+", TK_HEX},
   {"!=", TK_NEQ},
-  {"&&", TK_AND}
+  {"&&", TK_AND},
+  {"$", TK_REG}
 };
 
 #define NR_REGEX (sizeof(rules) / sizeof(rules[0]) )
@@ -94,6 +95,7 @@ static bool make_token(char *e) {
 
         switch (rules[i].token_type) {
           case TK_NOTYPE: break;
+          case TK_HEX:
           case NUMBER: {
             if (substr_len > 32) {
               Log("The value of number is out of range");
@@ -132,6 +134,8 @@ int op_priority(int op) {
     case '-': return 3;
     case '*':
     case '/': return 4;
+    case TK_DEFER:
+    case TK_REG: return 5;
     default: return 0;
   }
 }
@@ -149,6 +153,7 @@ int make_poland() {
         }
         break;
       }
+      case TK_HEX:
       case NUMBER: poland_output[poland_len++] = tokens[i]; break;
       default: {
         if (op_priority(tokens[i].type) > op_priority(poland_stack[top-1].type)) {
@@ -178,17 +183,26 @@ int cal_poland(int poland_len) {
     if (poland_output[i].type == NUMBER) {
       sscanf(poland_output[i].str, "%d", &val);
       num_stack[top++] = val;
+    } else if (poland_output[i].type == TK_HEX) {
+      sscanf(poland_output[i].str, "%x", &val);
+      num_stack[top++] = val;
     } else {
       top1 = num_stack[--top];
-      top2 = num_stack[--top];
-      switch (poland_output[i].type) {
-        case TK_AND: ans = top2 && top1; break;
-        case TK_EQ: ans = top2 == top1; break;
-        case TK_NEQ: ans = top2 != top1; break;
-        case '+': ans = top2 + top1; break;
-        case '-': ans = top2 - top1; break;
-        case '*': ans = top2 * top1; break;
-        case '/': ans = top2 / top1; break;
+      if (poland_output[i].type == TK_DEFER) {
+        ans = top1 * 2;
+      } else if (poland_output[i].type == TK_REG) {
+        ans = top1 * 3;
+      } else {
+        top2 = num_stack[--top];
+        switch (poland_output[i].type) {
+          case TK_AND: ans = top2 && top1; break;
+          case TK_EQ:  ans = top2 == top1; break;
+          case TK_NEQ: ans = top2 != top1; break;
+          case '+': ans = top2 + top1; break;
+          case '-': ans = top2 - top1; break;
+          case '*': ans = top2 * top1; break;
+          case '/': ans = top2 / top1; break;
+        }
       }
       num_stack[top++] = ans;
     }
@@ -204,6 +218,21 @@ uint32_t expr(char *e, bool *success) {
 
   /* TODO: Insert codes to evaluate the expression. */
   *success = true;
+
+  for (int i = 0; i < nr_token; i++) {
+    if (tokens[i].type == '*') {
+      if (i == 0) {
+        tokens[i].type = TK_DEFER;
+      }
+      switch (tokens[i-1].type) {
+        case '+': case '-': case '*': case '/':
+        case TK_AND: case TK_NEQ: case TK_EQ: {
+          tokens[i].type = TK_DEFER;
+        }
+      }
+    }
+  }
+
   int poland_len = make_poland();
   return cal_poland(poland_len);
 }
