@@ -46,7 +46,7 @@ void free_wp(int n) {
   free_ = wp;
 }
 
-WP* changed_wp() {
+WP* changed_wp(unsigned *old) {
   WP* wp;
   bool success;
   unsigned val;
@@ -54,6 +54,7 @@ WP* changed_wp() {
     val = expr(wp->expr, &success);
     assert(success);
     if (val != wp->value) {
+      *old = wp->value;
       wp->value = val;
       return wp;
     }

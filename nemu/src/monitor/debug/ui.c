@@ -87,6 +87,7 @@ static int cmd_w(char *args) {
   strcpy(wp->expr, args);
   wp->value = expr(args, &success);
   assert(success);
+  printf("Watchpoint %d %s\n", wp->NO, wp->expr);
   return 0;
 }
 

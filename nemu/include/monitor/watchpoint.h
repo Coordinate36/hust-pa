@@ -9,11 +9,11 @@ typedef struct watchpoint {
 
   /* TODO: Add more members if necessary */
   char expr[256];
-  int value;
+  unsigned value;
 } WP;
 
 WP* new_wp();
 void free_wp(int n);
-WP* changed_wp();
+WP* changed_wp(unsigned* old);
 
 #endif

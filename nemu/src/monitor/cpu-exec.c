@@ -41,10 +41,12 @@ void cpu_exec(uint64_t n) {
 
 #ifdef DEBUG
     /* TODO: check watchpoints here. */
-    WP* wp = changed_wp();
+    unsigned old;
+    WP* wp = changed_wp(&old);
     if (wp != NULL) {
       nemu_state = NEMU_STOP;
-      printf("Watchpoint %s has changed to %d\n", wp->expr, wp->value);
+      printf("Watchpoint %d: %s\n\n", wp->NO, wp->expr);
+      printf("Old value = %u\nNew value = %u", old, wp->value);
     }
 
 #endif
