@@ -50,6 +50,7 @@ WP* changed_wp() {
   unsigned val;
   for (wp = head; wp != NULL; wp = wp->next) {
     val = expr(wp->expr, &success);
+    assert(success);
     if (val != wp->value) {
       wp->value = val;
       return wp;

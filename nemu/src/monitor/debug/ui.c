@@ -75,7 +75,10 @@ static int cmd_info(char *args) {
 
 static int cmd_w(char *args) {
   WP* wp = new_wp();
+  bool success;
   strcpy(wp->expr, args);
+  wp->value = expr(args, &success);
+  assert(success);
   return 0;
 }
 
