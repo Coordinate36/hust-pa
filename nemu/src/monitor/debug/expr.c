@@ -208,7 +208,7 @@ uint32_t cal_poland(int poland_len) {
     } else {
       top1 = num_stack[--top];
       if (poland_output[i].type == TK_DEFER) {
-        ans = vaddr_read(top1, 4);
+        ans = vaddr_read(top1, 1);
       } else {
         top2 = num_stack[--top];
         switch (poland_output[i].type) {
