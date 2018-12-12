@@ -125,10 +125,13 @@ static bool make_token(char *e) {
 
 int op_priority(int op) {
   switch (op) {
+    case TK_AND: return 1;
+    case TK_EQ:
+    case TK_NEQ: return 2;
     case '+':
-    case '-': return 1;
+    case '-': return 3;
     case '*':
-    case '/': return 2;
+    case '/': return 4;
     default: return 0;
   }
 }
@@ -179,6 +182,9 @@ int cal_poland(int poland_len) {
       top1 = num_stack[--top];
       top2 = num_stack[--top];
       switch (poland_output[i].type) {
+        case TK_AND: ans = top2 && top1; break;
+        case TK_EQ: ans = top2 == top1; break;
+        case TK_NEQ: ans = top2 != top1; break;
         case '+': ans = top2 + top1; break;
         case '-': ans = top2 - top1; break;
         case '*': ans = top2 * top1; break;
