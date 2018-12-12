@@ -44,7 +44,7 @@ void cpu_exec(uint64_t n) {
     WP* wp = changed_wp();
     if (wp != NULL) {
       nemu_state = NEMU_STOP;
-      printf("Watchpoint %s has changed to %d", wp->expr, wp->value);
+      printf("Watchpoint %s has changed to %d\n", wp->expr, wp->value);
     }
 
 #endif
