@@ -10,7 +10,7 @@ enum {
   TK_NOTYPE = 256, TK_EQ,
 
   /* TODO: Add more token types */
-  NUMBER
+  NUMBER, TK_HEX, TK_REG, TK_NEQ, TK_AND
 };
 
 static struct rule {
@@ -30,12 +30,16 @@ static struct rule {
   {"-", '-'},
   {"\\*", '*'},
   {"/", '/'},
-  {"[0-9]+", NUMBER}
+  {"[0-9]+", NUMBER},
+  {"0x[0-9a-f]+", TK_HEX},
+  {"!=", TK_NEQ},
+  {"&&", TK_AND}
 };
 
 #define NR_REGEX (sizeof(rules) / sizeof(rules[0]) )
 
 static regex_t re[NR_REGEX];
+
 
 /* Rules are used for many times.
  * Therefore we compile them only once before any usage.
@@ -61,6 +65,9 @@ typedef struct token {
 
 Token tokens[65535];
 int nr_token;
+Token poland_stack[65535];
+Token poland_output[65535];
+int num_stack[65535];
 
 static bool make_token(char *e) {
   int position = 0;
@@ -116,53 +123,71 @@ static bool make_token(char *e) {
   return true;
 }
 
-uint32_t walk(int* step) {
-  uint32_t rst = 0;
-  int num = 0, next = 0;
-  int op = '+';
+int op_priority(int op) {
+  switch (op) {
+    case '+':
+    case '-': return 1;
+    case '*':
+    case '/': return 2;
+    default: return 0;
+  }
+}
 
+int make_poland() {
+  int top = 0;
+  int poland_len = 0;
   int i;
-  for (i = *step; i < nr_token; i++) {
-    if (tokens[i].type == NUMBER) {
-      sscanf(tokens[i].str, "%u", &next);
-    } else if (tokens[i].type == '(') {
-      i++;
-      next = walk(&i);
-    } else {
-      panic("Invalid token %d next to %c", tokens[i].type, op);
-    }
-    switch (op) {
-      case '+': {
-        rst += num;
-        num = next;
+  for (i = 0; i < nr_token; i++) {
+    switch (tokens[i].type) {
+      case '(': poland_stack[top++] = tokens[i]; break;
+      case ')': {
+        while (top > 0 && poland_stack[--top].type != '(') {
+          poland_output[poland_len++] = poland_stack[top];
+        }
         break;
       }
-      case '-': {
-        rst += num;
-        num = -next;
-        break;
-      }
-      case '*': {
-        num *= next;
-        break;
-      }
-      case '/': {
-        num /= next;
-        break;
-      }
-    }
-
-    if (++i < nr_token) {
-      op = tokens[i].type;
-      if (op == ')') {
-        *step = i;
-        break;
+      case NUMBER: poland_output[poland_len++] = tokens[i]; break;
+      default: {
+        if (op_priority(tokens[i].type) > op_priority(poland_stack[top-1].type)) {
+          poland_stack[top++] = tokens[i];
+        } else {
+          while (top > 0 && op_priority(tokens[i].type) <= op_priority(poland_stack[top-1].type)) {
+            poland_output[poland_len++] = poland_stack[--top];
+          }
+          poland_stack[top++] = tokens[i];
+        }
       }
     }
   }
+  while (top > 0) {
+    poland_output[poland_len++] = poland_stack[--top];
+  }
+  return poland_len;
+}
 
-  rst += num;
-  return rst;
+int cal_poland(int poland_len) {
+  int top = 0;
+  int ans = 0;
+  int val;
+  int top1, top2;
+  int i;
+  for (i = 0; i < poland_len; i++) {
+    if (poland_output[i].type == NUMBER) {
+      sscanf(poland_output[i].str, "%d", &val);
+      num_stack[top++] = val;
+    } else {
+      top1 = num_stack[--top];
+      top2 = num_stack[--top];
+      switch (poland_output[i].type) {
+        case '+': ans = top2 + top1; break;
+        case '-': ans = top2 - top1; break;
+        case '*': ans = top2 * top1; break;
+        case '/': ans = top2 / top1; break;
+      }
+      num_stack[top++] = ans;
+    }
+  }
+  return ans;
 }
 
 uint32_t expr(char *e, bool *success) {
@@ -173,6 +198,6 @@ uint32_t expr(char *e, bool *success) {
 
   /* TODO: Insert codes to evaluate the expression. */
   *success = true;
-  int step = 0;
-  return walk(&step);
+  int poland_len = make_poland();
+  return cal_poland(poland_len);
 }
