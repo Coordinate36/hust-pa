@@ -192,7 +192,7 @@ int reg_value(char* reg) {
 
 int cal_poland(int poland_len) {
   int top = 0;
-  int ans = 0;
+  unsigned ans = 0;
   int val;
   int top1, top2;
   int i;
