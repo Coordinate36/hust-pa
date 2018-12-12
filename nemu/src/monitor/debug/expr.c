@@ -187,7 +187,7 @@ int cal_poland(int poland_len) {
       num_stack[top++] = ans;
     }
   }
-  return ans;
+  return num_stack[top-1];
 }
 
 uint32_t expr(char *e, bool *success) {
