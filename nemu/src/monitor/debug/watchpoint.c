@@ -21,17 +21,27 @@ void init_wp_pool() {
 /* TODO: Implement the functionality of watchpoint */
 
 WP* new_wp() {
-  WP* wp = head;
-  if (head == NULL) {
-    panic("Watch points number can not exceed %d", NR_WP);
+  if (free_ == NULL) {
+    panic("The number of watch points can not exceed 32");
   }
-  head = head->next;
+  WP* wp = free_;
+  free_ = free_->next;
+  wp->next = head;
+  head = wp;
   return wp;
 }
 
 void free_wp(WP *wp) {
-  wp->next = head;
-  head = wp;
+  assert(wp != NULL);
+  if (wp == head) {
+    head = head->next;
+  } else {
+    WP* prior;
+    for (prior = head; prior->next != wp; prior = prior->next);
+    prior->next = wp->next;
+  }
+  wp->next = free_;
+  free_ = wp;
 }
 
 bool is_wp_changed() {
