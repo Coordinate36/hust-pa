@@ -68,21 +68,26 @@ static int cmd_p(char *args) {
 }
 
 static int cmd_info(char *args) {
-  int i;
-  for (i = R_EAX; i <= R_EDI; i++) {
-    printf("%s\t0x%x\t%d\n", regsl[i], reg_l(i), reg_l(i));
-  }
-  for (i = R_AX; i <= R_DI; i++) {
-    printf("%s\t0x%x\t%d\n", regsw[i], reg_w(i), reg_w(i));
-  }
-  for (i = R_AL; i <= R_BH; i++) {
-    printf("%s\t0x%x\t%d\n", regsb[i], reg_b(i), reg_b(i));
+  if (args[0] == 'r') {
+    int i;
+    for (i = R_EAX; i <= R_EDI; i++) {
+      printf("%s\t0x%x\t%d\n", regsl[i], reg_l(i), reg_l(i));
+    }
+    for (i = R_AX; i <= R_DI; i++) {
+      printf("%s\t0x%x\t%d\n", regsw[i], reg_w(i), reg_w(i));
+    }
+    for (i = R_AL; i <= R_BH; i++) {
+      printf("%s\t0x%x\t%d\n", regsb[i], reg_b(i), reg_b(i));
+    }
+  } else {
+    info_wp();
   }
   return 0;
 }
 
 static int cmd_w(char *args) {
   WP* wp = new_wp();
+  wp->hit = 0;
   bool success;
   strcpy(wp->expr, args);
   wp->value = expr(args, &success);

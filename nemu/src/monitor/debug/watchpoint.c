@@ -61,3 +61,11 @@ WP* changed_wp(unsigned *old) {
   }
   return NULL;
 }
+
+void info_wp() {
+  puts("Num\tType\t\tHit\tWhat\t");
+  WP* wp;
+  for (wp = head; wp != NULL; wp = wp->next) {
+    printf("%d\twatchpoint\t%d\t%s\t\n", wp->NO, wp->hit, wp->expr);
+  }
+}
