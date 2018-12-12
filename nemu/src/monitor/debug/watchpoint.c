@@ -44,7 +44,7 @@ void free_wp(WP *wp) {
   free_ = wp;
 }
 
-bool is_wp_changed() {
+WP* changed_wp() {
   WP* wp;
   bool success;
   unsigned val;
@@ -52,8 +52,8 @@ bool is_wp_changed() {
     val = expr(wp->expr, &success);
     if (val != wp->value) {
       wp->value = val;
-      return true;
+      return wp;
     }
   }
-  return false;
+  return NULL;
 }
