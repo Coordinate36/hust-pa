@@ -56,11 +56,15 @@ static int cmd_x(char *args) {
 }
 
 static int cmd_info(char *args) {
-  static const char* regs[] = {"eax", "ecx", "edx", "ebx", "esp", "ebp", "esi", "edi"};
-  
   int i;
-  for (i = R_EAX; i < R_EDI; i++) {
-    printf("%s\t0x%x\t%d\n", regs[i], cpu.gpr[i]._32, cpu.gpr[i]._32);
+  for (i = R_EAX; i <= R_EDI; i++) {
+    printf("%s\t0x%x\t%d\n", regsl[i], reg_l(i), reg_l(i));
+  }
+  for (i = R_AX; i <= R_DI; i++) {
+    printf("%s\t0x%x\t%d\n", regsw[i], reg_w(i), reg_w(i));
+  }
+  for (i = R_AL; i <= R_BH; i++) {
+    printf("%s\t0x%x\t%d\n", regsb[i], reg_b(i), reg_b(i));
   }
   return 0;
 }

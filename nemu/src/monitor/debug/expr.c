@@ -34,7 +34,7 @@ static struct rule {
   {"0x[0-9a-fA-F]+", TK_HEX},
   {"!=", TK_NEQ},
   {"&&", TK_AND},
-  {"$", TK_REG}
+  {"$[a-z]+", TK_REG}
 };
 
 #define NR_REGEX (sizeof(rules) / sizeof(rules[0]) )
@@ -95,6 +95,7 @@ static bool make_token(char *e) {
 
         switch (rules[i].token_type) {
           case TK_NOTYPE: break;
+          case TK_REG:
           case TK_HEX:
           case NUMBER: {
             if (substr_len > 32) {
@@ -189,9 +190,9 @@ int cal_poland(int poland_len) {
     } else {
       top1 = num_stack[--top];
       if (poland_output[i].type == TK_DEFER) {
-        ans = top1 * 2;
+        ans = vaddr_read(top1, 4);
       } else if (poland_output[i].type == TK_REG) {
-        ans = top1 * 3;
+        
       } else {
         top2 = num_stack[--top];
         switch (poland_output[i].type) {
