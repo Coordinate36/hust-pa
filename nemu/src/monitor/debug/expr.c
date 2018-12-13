@@ -10,7 +10,7 @@ enum {
   TK_NOTYPE = 256, TK_EQ,
 
   /* TODO: Add more token types */
-  NUMBER, TK_HEX, TK_REG, TK_NEQ, TK_AND, TK_DEFER
+  NUMBER, TK_HEX, TK_REG, TK_NEQ, TK_AND, TK_DEFER, TK_NEG
 };
 
 static struct rule {
@@ -135,6 +135,7 @@ int op_priority(int op) {
     case '-': return 3;
     case '*':
     case '/': return 4;
+    case TK_NEG:
     case TK_DEFER:
     case TK_REG: return 5;
     default: return 0;
@@ -209,6 +210,8 @@ uint32_t cal_poland(int poland_len) {
       top1 = num_stack[--top];
       if (poland_output[i].type == TK_DEFER) {
         ans = vaddr_read(top1, 1);
+      } else if (poland_output[i].type == TK_NEG) {
+        ans = -top1;
       } else {
         top2 = num_stack[--top];
         switch (poland_output[i].type) {
@@ -259,6 +262,16 @@ uint32_t expr(char *e, bool *success) {
         case '+': case '-': case '*': case '/':
         case TK_AND: case TK_NEQ: case TK_EQ: {
           tokens[i].type = TK_DEFER;
+        }
+      }
+    } else if (tokens[i].type == '-') {
+      if (i == 0) {
+        tokens[i].type = TK_NEG;
+      }
+      switch (tokens[i-1].type) {
+        case '+': case '-': case '*': case '/':
+        case TK_AND: case TK_NEQ: case TK_EQ: {
+          tokens[i].type = TK_NEG;
         }
       }
     }
