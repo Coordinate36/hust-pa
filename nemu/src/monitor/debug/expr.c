@@ -26,7 +26,7 @@ static struct rule {
   {"/", '/'},
   {"0[xX][0-9a-fA-F]+", TK_HEX},
   {"[0-9]+", NUMBER},
-  {"[0-9]+.[0-9]+", DECIMAL},
+  {"[0-9]+\\.[0-9]+", DECIMAL},
   {"!=", TK_NEQ},
   {"&&", TK_AND},
   {"\\$[a-z]+", TK_REG}
