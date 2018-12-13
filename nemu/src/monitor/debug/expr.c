@@ -30,7 +30,7 @@ static struct rule {
   {"-", '-'},
   {"\\*", '*'},
   {"/", '/'},
-  {"0x[0-9a-fA-F]+", TK_HEX},
+  {"0[xX][0-9a-fA-F]+", TK_HEX},
   {"[0-9]+", NUMBER},
   {"!=", TK_NEQ},
   {"&&", TK_AND},
@@ -234,9 +234,22 @@ uint32_t expr(char *e, bool *success) {
   }
 
   /* TODO: Insert codes to evaluate the expression. */
+  int i;
+  int cnt = 0;
+  for (i = 0; i < nr_token; i++) {
+    if (tokens[i].type == '(') {
+      cnt++;
+    } else if (tokens[i].type == ')') {
+      cnt--;
+    }
+    if (cnt < 0) {
+      panic("Parentheses not matched");
+    }
+  }
+
   *success = true;
 
-  for (int i = 0; i < nr_token; i++) {
+  for (i = 0; i < nr_token; i++) {
     if (tokens[i].type == '*') {
       if (i == 0) {
         tokens[i].type = TK_DEFER;
