@@ -243,7 +243,7 @@ uint32_t expr(char *e, bool *success) {
       cnt--;
     }
     if (cnt < 0) {
-      printf("Parentheses not matched");
+      printf("Parentheses not matched\n");
       assert(0);
     }
   }
