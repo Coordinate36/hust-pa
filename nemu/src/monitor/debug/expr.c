@@ -10,7 +10,7 @@ enum {
   TK_NOTYPE = 256, TK_EQ,
 
   /* TODO: Add more token types */
-  NUMBER, TK_HEX, TK_REG, TK_NEQ, TK_AND, TK_DEFER, TK_NEG
+  NUMBER, TK_HEX, TK_REG, TK_NEQ, TK_AND, TK_DEFER, TK_NEG, DECIMAL
 };
 
 static struct rule {
@@ -32,6 +32,7 @@ static struct rule {
   {"/", '/'},
   {"0[xX][0-9a-fA-F]+", TK_HEX},
   {"[0-9]+", NUMBER},
+  {"[0-9]+.[0-9]+", DECIMAL},
   {"!=", TK_NEQ},
   {"&&", TK_AND},
   {"\\$[a-z]+", TK_REG}
@@ -64,11 +65,19 @@ typedef struct token {
   char str[32];
 } Token;
 
+typedef struct {
+    int type;
+    union {
+        int int_;
+        double double_;
+    };
+} Operand;
+
 Token tokens[65535];
 int nr_token;
 Token poland_stack[65535];
 Token poland_output[65535];
-int num_stack[65535];
+Operand num_stack[65535];
 
 static bool make_token(char *e) {
   int position = 0;
@@ -95,6 +104,7 @@ static bool make_token(char *e) {
 
         switch (rules[i].token_type) {
           case TK_NOTYPE: break;
+          case DECIMAL:
           case TK_REG:
           case TK_HEX:
           case NUMBER: {
@@ -154,6 +164,7 @@ int make_poland() {
         }
         break;
       }
+      case DECIMAL:
       case TK_REG:
       case TK_HEX:
       case NUMBER: poland_output[poland_len++] = tokens[i]; break;
@@ -191,37 +202,66 @@ int reg_value(char* reg) {
   return cpu.eip;
 }
 
-uint32_t cal_poland(int poland_len) {
+Operand cal_poland(int poland_len) {
   int top = 0;
-  uint32_t ans = 0;
-  int val;
-  int top1, top2;
+  Operand ans;
+  Operand val;
+  Operand top1, top2;
   int i;
   for (i = 0; i < poland_len; i++) {
     if (poland_output[i].type == NUMBER) {
-      sscanf(poland_output[i].str, "%d", &val);
+      val.type = NUMBER;
+      sscanf(poland_output[i].str, "%d", &val.int_);
       num_stack[top++] = val;
     } else if (poland_output[i].type == TK_HEX) {
-      sscanf(poland_output[i].str, "%x", &val);
+      val.type = NUMBER;
+      sscanf(poland_output[i].str, "%x", &val.int_);
       num_stack[top++] = val;
     } else if (poland_output[i].type == TK_REG) {
-      num_stack[top++] = reg_value(poland_output[i].str + 1);
+      val.type = NUMBER;
+      val.int_ = reg_value(poland_output[i].str + 1);
+      num_stack[top++] = val;
+    } else if (poland_output[i].type == DECIMAL) {
+      val.type = DECIMAL;
+      sscanf(poland_output[i].str, "%lf", &val.double_);
+      num_stack[top++] = val;
     } else {
       top1 = num_stack[--top];
+      ans.type = top1.type;
       if (poland_output[i].type == TK_DEFER) {
-        ans = vaddr_read(top1, 1);
+        ans.int_ = top1.int_ * 2;
       } else if (poland_output[i].type == TK_NEG) {
-        ans = -top1;
+        if (top1.type == NUMBER) {
+          ans.int_ = -top1.int_;
+        } else {
+          ans.double_ = -top1.double_;
+        }
       } else {
+        // binary op
         top2 = num_stack[--top];
-        switch (poland_output[i].type) {
-          case TK_AND: ans = top2 && top1; break;
-          case TK_EQ:  ans = top2 == top1; break;
-          case TK_NEQ: ans = top2 != top1; break;
-          case '+': ans = top2 + top1; break;
-          case '-': ans = top2 - top1; break;
-          case '*': ans = top2 * top1; break;
-          case '/': ans = top2 / top1; break;
+        if (top2.type == DECIMAL) {
+          ans.type = DECIMAL;
+        }
+        if (ans.type == NUMBER) {
+          switch (poland_output[i].type) {
+            case '+': ans.int_ = top2.int_ + top1.int_; break;
+            case '-': ans.int_ = top2.int_ - top1.int_; break;
+            case '*': ans.int_ = top2.int_ * top1.int_; break;
+            case '/': ans.int_ = top2.int_ / top1.int_; break;
+            case TK_AND: ans.int_ = top2.int_ && top1.int_; break;
+            case TK_NEQ: ans.int_ = top2.int_ != top1.int_; break;
+            case TK_EQ:  ans.int_ = top2.int_ == top1.int_; break;
+          }
+        } else {
+          switch (poland_output[i].type) {
+            case '+': ans.double_ = (top2.type == NUMBER ? top2.int_: top2.double_) + (top1.type == NUMBER ? top1.int_: top1.double_); break;
+            case '-': ans.double_ = (top2.type == NUMBER ? top2.int_: top2.double_) - (top1.type == NUMBER ? top1.int_: top1.double_); break;
+            case '*': ans.double_ = (top2.type == NUMBER ? top2.int_: top2.double_) * (top1.type == NUMBER ? top1.int_: top1.double_); break;
+            case '/': ans.double_ = (top2.type == NUMBER ? top2.int_: top2.double_) / (top1.type == NUMBER ? top1.int_: top1.double_); break;
+            case TK_AND: ans.double_ = (top2.type == NUMBER ? top2.int_: top2.double_) && (top1.type == NUMBER ? top1.int_: top1.double_); break;
+            case TK_NEQ: ans.double_ = (top2.type == NUMBER ? top2.int_: top2.double_) != (top1.type == NUMBER ? top1.int_: top1.double_); break;
+            case TK_EQ:  ans.double_ = (top2.type == NUMBER ? top2.int_: top2.double_) == (top1.type == NUMBER ? top1.int_: top1.double_); break;
+          }
         }
       }
       num_stack[top++] = ans;
@@ -230,10 +270,11 @@ uint32_t cal_poland(int poland_len) {
   return num_stack[top-1];
 }
 
-uint32_t expr(char *e, bool *success) {
+Operand expr(char *e, bool *success) {
   if (!make_token(e)) {
     *success = false;
-    return 0;
+    Operand rst = {type: NUMBER, int_: 0};
+    return rst;
   }
 
   /* TODO: Insert codes to evaluate the expression. */
@@ -247,7 +288,9 @@ uint32_t expr(char *e, bool *success) {
     }
     if (cnt < 0) {
       printf("Parentheses not matched\n");
-      assert(0);
+      *success = false;
+      Operand rst = {type: NUMBER, int_: 0};
+      return rst;
     }
   }
 
