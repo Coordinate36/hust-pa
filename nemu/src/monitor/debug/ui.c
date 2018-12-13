@@ -49,7 +49,7 @@ static int cmd_x(char *args) {
   for (; *args != ' '; args++);
   for (; *args == ' '; args++);
   bool success;
-  addr = expr(args, &success);
+  addr = expr(args, &success).int_;
   printf("0x%x: ", addr);
   int i;
   for (i = 0; i < n; i++) {
@@ -61,9 +61,13 @@ static int cmd_x(char *args) {
 
 static int cmd_p(char *args) {
   bool success;
-  unsigned ans = expr(args, &success);
+  Operand ans = expr(args, &success);
   assert(success);
-  printf("%u\n", ans);
+  if (ans.type == NUMBER) {
+    printf("%u\n", ans.int_);
+  } else {
+    printf("%lf\n", ans.double_);
+  }
   return 0;
 }
 

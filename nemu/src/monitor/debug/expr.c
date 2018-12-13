@@ -1,17 +1,11 @@
 #include "nemu.h"
+#include "monitor/expr.h"
 
 /* We use the POSIX regex functions to process regular expressions.
  * Type 'man regex' for more information about POSIX regex functions.
  */
 #include <sys/types.h>
 #include <regex.h>
-
-enum {
-  TK_NOTYPE = 256, TK_EQ,
-
-  /* TODO: Add more token types */
-  NUMBER, TK_HEX, TK_REG, TK_NEQ, TK_AND, TK_DEFER, TK_NEG, DECIMAL
-};
 
 static struct rule {
   char *regex;
@@ -65,19 +59,21 @@ typedef struct token {
   char str[32];
 } Token;
 
-typedef struct {
-    int type;
-    union {
-        int int_;
-        double double_;
-    };
-} Operand;
-
 Token tokens[65535];
 int nr_token;
 Token poland_stack[65535];
 Token poland_output[65535];
 Operand num_stack[65535];
+
+bool operand_equal(Operand* a, Operand* b) {
+  if (a->type != b->type) {
+    return false;
+  }
+  if (a->type == NUMBER) {
+    return a->int_ == b->int_;
+  }
+  return a->double_ == b->double_;
+}
 
 static bool make_token(char *e) {
   int position = 0;

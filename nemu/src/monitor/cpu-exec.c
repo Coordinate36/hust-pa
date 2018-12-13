@@ -1,4 +1,5 @@
 #include "nemu.h"
+#include "monitor/expr.h"
 #include "monitor/monitor.h"
 #include "monitor/watchpoint.h"
 
@@ -41,13 +42,17 @@ void cpu_exec(uint64_t n) {
 
 #ifdef DEBUG
     /* TODO: check watchpoints here. */
-    unsigned old;
+    Operand old;
     WP* wp = changed_wp(&old);
     if (wp != NULL) {
       nemu_state = NEMU_STOP;
       wp->hit++;
       printf("Watchpoint %d: %s\n\n", wp->NO, wp->expr);
-      printf("Old value = %u\nNew value = %u\n", old, wp->value);
+      if (old.type == NUMBER) {
+        printf("Old value = %u\nNew value = %u\n", old.int_, wp->value.int_);
+      } else {
+        printf("Old value = %lf\nNew value = %lf\n", old.double_, wp->value.double_);
+      }
     }
 
 #endif

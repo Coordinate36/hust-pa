@@ -1,5 +1,5 @@
-#include "monitor/watchpoint.h"
 #include "monitor/expr.h"
+#include "monitor/watchpoint.h"
 
 #define NR_WP 32
 
@@ -46,14 +46,14 @@ void free_wp(int n) {
   free_ = wp;
 }
 
-WP* changed_wp(unsigned *old) {
+WP* changed_wp(Operand *old) {
   WP* wp;
   bool success;
-  unsigned val;
+  Operand val;
   for (wp = head; wp != NULL; wp = wp->next) {
     val = expr(wp->expr, &success);
     assert(success);
-    if (val != wp->value) {
+    if (operand_equal(&val, &wp->value)) {
       *old = wp->value;
       wp->value = val;
       return wp;
