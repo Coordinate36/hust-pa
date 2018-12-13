@@ -188,7 +188,7 @@ int reg_value(char* reg) {
       return reg_b(i);
     }
   }
-  return -1;
+  return cpu.eip;
 }
 
 uint32_t cal_poland(int poland_len) {
