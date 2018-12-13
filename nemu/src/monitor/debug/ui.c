@@ -36,6 +36,73 @@ static int cmd_q(char *args) {
   return -1;
 }
 
+static int cmd_si(char *args) {
+  int n = args == NULL ? 1 : atoi(args);
+  cpu_exec(n);
+  return 0;
+}
+
+static int cmd_x(char *args) {
+  uint32_t n;
+  uint32_t addr;
+  sscanf(args, "%d", &n);
+  for (; *args != ' '; args++);
+  for (; *args == ' '; args++);
+  bool success;
+  addr = expr(args, &success);
+  printf("0x%x: ", addr);
+  int i;
+  for (i = 0; i < n; i++) {
+    printf("0x%x\t", vaddr_read(addr + i, 1));
+  }
+  puts("");
+  return 0;
+}
+
+static int cmd_p(char *args) {
+  bool success;
+  unsigned ans = expr(args, &success);
+  assert(success);
+  printf("%u\n", ans);
+  return 0;
+}
+
+static int cmd_info(char *args) {
+  if (args[0] == 'r') {
+    int i;
+    for (i = R_EAX; i <= R_EDI; i++) {
+      printf("%s\t0x%x\t%d\n", regsl[i], reg_l(i), reg_l(i));
+    }
+    for (i = R_AX; i <= R_DI; i++) {
+      printf("%s\t0x%x\t%d\n", regsw[i], reg_w(i), reg_w(i));
+    }
+    for (i = R_AL; i <= R_BH; i++) {
+      printf("%s\t0x%x\t%d\n", regsb[i], reg_b(i), reg_b(i));
+    }
+  } else {
+    info_wp();
+  }
+  return 0;
+}
+
+static int cmd_w(char *args) {
+  WP* wp = new_wp();
+  wp->hit = 0;
+  bool success;
+  strcpy(wp->expr, args);
+  wp->value = expr(args, &success);
+  assert(success);
+  printf("Watchpoint %d %s\n", wp->NO, wp->expr);
+  return 0;
+}
+
+static int cmd_d(char *args) {
+  int n;
+  sscanf(args, "%d", &n);
+  free_wp(n - 1);
+  return 0;
+}
+
 static int cmd_help(char *args);
 
 static struct {
@@ -48,7 +115,12 @@ static struct {
   { "q", "Exit NEMU", cmd_q },
 
   /* TODO: Add more commands */
-
+  { "si", "Single step execution", cmd_si },
+  { "info", "Print program status", cmd_info },
+  { "p", "Eval the expression", cmd_p },
+  { "x", "Scan memory", cmd_x },
+  { "w", "Set monitoring points", cmd_w },
+  { "d", "Delete monitoring points", cmd_d }
 };
 
 #define NR_CMD (sizeof(cmd_table) / sizeof(cmd_table[0]))

@@ -1,4 +1,5 @@
 #include "nemu.h"
+#include "monitor/expr.h"
 #include "monitor/monitor.h"
 #include <unistd.h>
 
@@ -105,6 +106,29 @@ static inline void parse_args(int argc, char *argv[]) {
   }
 }
 
+static inline void expr_test() {
+  FILE* fp = fopen("tools/gen-expr/input", "r");
+  char line[65536];
+  int i;
+  uint32_t ans, rst;
+  bool success;
+  for (i = 0; i < 100; i++) {
+    fgets(line, 65535, fp);
+    int j;
+    for (j = 0; line[j] != '\0'; j++) {
+      if (line[j] == '\n' || line[j] == '\r') {
+        line[j] = '\0';
+      }
+    }
+    for (j = 0; line[j] != ' '; j++);
+    sscanf(line, "%d", &ans);
+    rst = expr(line + j + 1, &success);
+    Log("ans: %d rst: %d\n", ans, rst);
+    assert(success);
+    assert(ans == rst);
+  }
+}
+
 int init_monitor(int argc, char *argv[]) {
   /* Perform some global initialization. */
 
@@ -133,6 +157,8 @@ int init_monitor(int argc, char *argv[]) {
   init_device();
 
   init_difftest(diff_so_file, img_size);
+
+  expr_test();
 
   /* Display welcome message. */
   welcome();
