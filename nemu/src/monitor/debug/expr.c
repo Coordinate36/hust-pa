@@ -136,8 +136,7 @@ int op_priority(int op) {
     case '*':
     case '/': return 4;
     case TK_NEG:
-    case TK_DEFER:
-    case TK_REG: return 5;
+    case TK_DEFER: return 5;
     default: return 0;
   }
 }
@@ -155,6 +154,7 @@ int make_poland() {
         }
         break;
       }
+      case TK_REG:
       case TK_HEX:
       case NUMBER: poland_output[poland_len++] = tokens[i]; break;
       default: {
@@ -259,7 +259,7 @@ uint32_t expr(char *e, bool *success) {
         tokens[i].type = TK_DEFER;
       }
       switch (tokens[i-1].type) {
-        case '+': case '-': case '*': case '/':
+        case '+': case '-': case '*': case '/': case '(':
         case TK_AND: case TK_NEQ: case TK_EQ: {
           tokens[i].type = TK_DEFER;
         }
@@ -269,7 +269,7 @@ uint32_t expr(char *e, bool *success) {
         tokens[i].type = TK_NEG;
       }
       switch (tokens[i-1].type) {
-        case '+': case '-': case '*': case '/':
+        case '+': case '-': case '*': case '/': case '(':
         case TK_AND: case TK_NEQ: case TK_EQ: {
           tokens[i].type = TK_NEG;
         }
