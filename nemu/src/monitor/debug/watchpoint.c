@@ -53,7 +53,7 @@ WP* changed_wp(Operand *old) {
   for (wp = head; wp != NULL; wp = wp->next) {
     val = expr(wp->expr, &success);
     assert(success);
-    if (operand_equal(&val, &wp->value)) {
+    if (!operand_equal(&val, &wp->value)) {
       *old = wp->value;
       wp->value = val;
       return wp;
