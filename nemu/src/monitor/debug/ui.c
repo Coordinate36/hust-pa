@@ -62,7 +62,10 @@ static int cmd_x(char *args) {
 static int cmd_p(char *args) {
   bool success;
   Operand ans = expr(args, &success);
-  assert(success);
+  if (success == false) {
+    printf("Invalid expression\n");
+    return 0;
+  }
   if (ans.type == NUMBER) {
     printf("%u\n", ans.int_);
   } else {

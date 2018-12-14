@@ -283,7 +283,6 @@ Operand expr(char *e, bool *success) {
       cnt--;
     }
     if (cnt < 0) {
-      printf("Parentheses not matched\n");
       *success = false;
       Operand rst = {type: NUMBER, int_: 0};
       return rst;
