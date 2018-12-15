@@ -41,7 +41,6 @@ static inline make_DopHelper(SI) {
    *
    op->simm = ???
    */
-  TODO();
   int extended = (4 - op->width) << 3;
   op->imm = ((int32_t)instr_fetch(eip, op->width) << extended) >> extended;
 

@@ -7,6 +7,7 @@ make_EHelper(add) {
 }
 
 make_EHelper(sub) {
+  panic("rtl_sub not implemented!");
   rtl_sub(&id_dest->val, &id_dest->val, &id_src->val);
 
   print_asm_template2(sub);
