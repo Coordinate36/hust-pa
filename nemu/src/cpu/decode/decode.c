@@ -287,7 +287,7 @@ make_DHelper(J) {
 }
 
 make_DHelper(call_rel32) {
-  decode_op_I(eip, id_dest, true);
+  decode_op_rm(eip, id_dest, true, NULL, false);
 }
 
 make_DHelper(push_SI) {
