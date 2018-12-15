@@ -45,7 +45,6 @@ static inline make_DopHelper(SI) {
   op->imm = ((int32_t)instr_fetch(eip, op->width) << extended) >> extended;
 
   rtl_li(&op->val, op->simm);
-  panic("after rtl_li!\n");
 
 #ifdef DEBUG
   snprintf(op->str, OP_STR_SIZE, "$0x%x", op->simm);
@@ -210,6 +209,7 @@ make_DHelper(SI2E) {
   decode_op_rm(eip, id_dest, true, NULL, false);
   id_src->width = 1;
   decode_op_SI(eip, id_src, true);
+  Log("after decode_op_SI\n");
   if (id_dest->width == 2) {
     id_src->val &= 0xffff;
   }
