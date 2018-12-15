@@ -205,12 +205,12 @@ make_DHelper(test_I) {
 }
 
 make_DHelper(SI2E) {
-  Log("eip:0x%x. before decode_op_SI\n", *eip);
+  Log("eip:0x%x. before decode_op_SI\n", cpu.eip);
   assert(id_dest->width == 2 || id_dest->width == 4);
   decode_op_rm(eip, id_dest, true, NULL, false);
   id_src->width = 1;
   decode_op_SI(eip, id_src, true);
-  Log("eip:0x%x. after decode_op_SI\n", *eip);
+  Log("eip:0x%x. after decode_op_SI\n", cpu.eip);
   if (id_dest->width == 2) {
     id_src->val &= 0xffff;
   }
