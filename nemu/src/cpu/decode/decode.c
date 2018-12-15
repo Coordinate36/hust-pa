@@ -209,7 +209,7 @@ make_DHelper(SI2E) {
   decode_op_rm(eip, id_dest, true, NULL, false);
   id_src->width = 1;
   decode_op_SI(eip, id_src, true);
-  Log("after decode_op_SI\n");
+  Log("eip:%d. after decode_op_SI\n", *eip);
   if (id_dest->width == 2) {
     id_src->val &= 0xffff;
   }
