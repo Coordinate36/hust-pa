@@ -44,7 +44,9 @@ static inline make_DopHelper(SI) {
   int extended = (4 - op->width) << 3;
   op->imm = ((int32_t)instr_fetch(eip, op->width) << extended) >> extended;
 
+  panic("rtl_li not implemented!");
   rtl_li(&op->val, op->simm);
+  panic("make_Dop ended!");
 
 #ifdef DEBUG
   snprintf(op->str, OP_STR_SIZE, "$0x%x", op->simm);
