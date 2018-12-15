@@ -6,6 +6,10 @@ make_EHelper(add) {
   print_asm_template2(add);
 }
 
+make_EHelper(xor) {
+  rtl_xor(&id_dest->val, &id_dest->val, &id_src->val);
+}
+
 make_EHelper(sub) {
   rtl_sub(&id_dest->val, &id_dest->val, &id_src->val);
 
