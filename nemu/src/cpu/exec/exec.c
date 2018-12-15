@@ -25,7 +25,7 @@ static inline void idex(vaddr_t *eip, opcode_entry *e) {
   /* eip is pointing to the byte next to opcode */
   if (e->decode)
     e->decode(eip);
-  Log("eip:%d. before execute!\n", *eip);
+  Log("eip:0x%x. before execute!\n", *eip);
   e->execute(eip);
 }
 
