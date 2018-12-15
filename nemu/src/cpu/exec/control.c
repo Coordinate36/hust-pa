@@ -33,7 +33,7 @@ make_EHelper(call) {
 }
 
 make_EHelper(ret) {
-  TODO();
+  rtl_pop(eip);
 
   print_asm("ret");
 }
