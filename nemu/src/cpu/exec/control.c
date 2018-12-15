@@ -35,6 +35,7 @@ make_EHelper(call) {
 
 make_EHelper(ret) {
   rtl_pop(eip);
+  *eip += 4;
 
   print_asm("ret");
 }
