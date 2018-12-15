@@ -302,7 +302,7 @@ make_DHelper(pop_r32) {
   decode_op_r(eip, id_dest, true);
 }
 
-make_EHelper(xor_r32) {
+make_DHelper(xor_r32) {
   decode_op_rm(eip, id_dest, true, id_src, true);
 }
 
