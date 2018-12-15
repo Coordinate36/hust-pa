@@ -53,7 +53,7 @@ $(BINARY): $(OBJS)
 	@$(LD) -O2 -rdynamic $(SO_LDLAGS) -o $@ $^ -lSDL2 -lreadline -ldl
 
 run: $(BINARY)
-	$(call git_commit, "run")
+	#$(call git_commit, "run")
 	$(NEMU_EXEC)
 
 gdb: $(BINARY)
