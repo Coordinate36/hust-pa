@@ -24,6 +24,7 @@ static inline void set_width(int width) {
 static inline void idex(vaddr_t *eip, opcode_entry *e) {
   /* eip is pointing to the byte next to opcode */
   Log("eip:%d. eax:%d\n", cpu.eip, cpu.eax);
+  cpu.eax = 0;
   if (e->decode)
     e->decode(eip);
   e->execute(eip);
