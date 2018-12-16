@@ -304,7 +304,7 @@ make_DHelper(pop_r32) {
 }
 
 make_DHelper(xor_r32) {
-  decode_op_rm(eip, id_dest, true, id_src, true);
+  decode_op_rm(eip, id_dest, true, NULL, false);
 }
 
 make_DHelper(in_I2a) {

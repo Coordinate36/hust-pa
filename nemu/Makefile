@@ -48,16 +48,16 @@ override ARGS += -d $(NEMU_HOME)/tools/qemu-diff/build/qemu-so
 NEMU_EXEC := $(BINARY) $(ARGS)
 
 $(BINARY): $(OBJS)
-	$(call git_commit, "compile")
+	#$(call git_commit, "compile")
 	@echo + LD $@
 	@$(LD) -O2 -rdynamic $(SO_LDLAGS) -o $@ $^ -lSDL2 -lreadline -ldl
 
 run: $(BINARY)
-	$(call git_commit, "run")
+	#$(call git_commit, "run")
 	$(NEMU_EXEC)
 
 gdb: $(BINARY)
-	$(call git_commit, "gdb")
+	#$(call git_commit, "gdb")
 	gdb -s $(BINARY) --args $(NEMU_EXEC)
 
 clean: 
