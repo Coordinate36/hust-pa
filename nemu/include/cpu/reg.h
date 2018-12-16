@@ -31,6 +31,14 @@ typedef struct {
       rtlreg_t eax, ecx, edx, ebx, esp, ebp, esi, edi;
     };
   };
+  
+  struct {
+    uint8_t CF : 1;
+    uint8_t ZF : 1;
+    uint8_t SF : 1;
+    uint8_t IF : 1;
+    uint8_t OF : 1;
+  };
 
   vaddr_t eip;
 
