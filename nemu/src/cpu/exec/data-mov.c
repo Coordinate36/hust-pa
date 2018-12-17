@@ -6,7 +6,7 @@ make_EHelper(mov) {
 }
 
 make_EHelper(push) {
-  rtl_push(&id_dest->reg);
+  rtl_push(&id_dest->val);
 
   print_asm_template1(push);
 }
@@ -30,7 +30,8 @@ make_EHelper(popa) {
 }
 
 make_EHelper(leave) {
-  TODO();
+  cpu.esp = cpu.ebp;
+  rtl_pop(&cpu.ebp);
 
   print_asm("leave");
 }

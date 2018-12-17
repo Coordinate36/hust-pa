@@ -1,7 +1,8 @@
 #include "cpu/exec.h"
 
 make_EHelper(add) {
-  TODO();
+  rtl_add(&id_dest->val, &id_dest->val, &id_src->val);
+  operand_write(id_dest, &id_dest->val);
 
   print_asm_template2(add);
 }
@@ -14,7 +15,8 @@ make_EHelper(sub) {
 }
 
 make_EHelper(cmp) {
-  TODO();
+  rtl_sub(&id_dest->val, &id_dest->val, &id_src->val);
+  cpu.ZF = id_dest->val == 0 ? 1 : 0;
 
   print_asm_template2(cmp);
 }

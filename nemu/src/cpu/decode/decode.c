@@ -41,9 +41,8 @@ static inline make_DopHelper(SI) {
    *
    op->simm = ???
    */
-  op->simm = instr_fetch(eip, op->width);
-  op->simm <<= (4 - op->width) << 3;
-  op->simm >>= (4 - op->width) << 3;
+  int extended = (4 - op->width) << 3;
+  op->simm = (int)instr_fetch(eip, op->width) << extended >> extended;
 
   rtl_li(&op->val, op->simm);
 
@@ -287,24 +286,8 @@ make_DHelper(J) {
   decoding.jmp_eip = id_dest->simm + *eip;
 }
 
-make_DHelper(call_rel32) {
-  decode_op_I(eip, id_dest, true);
-}
-
 make_DHelper(push_SI) {
   decode_op_SI(eip, id_dest, true);
-}
-
-make_DHelper(push_r32) {
-  decode_op_r(eip, id_dest, true);
-}
-
-make_DHelper(pop_r32) {
-  decode_op_r(eip, id_dest, true);
-}
-
-make_DHelper(xor_r32) {
-  decode_op_rm(eip, id_dest, true, NULL, false);
 }
 
 make_DHelper(in_I2a) {

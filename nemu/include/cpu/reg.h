@@ -32,12 +32,18 @@ typedef struct {
     };
   };
   
-  struct {
-    uint8_t CF : 1;
-    uint8_t ZF : 1;
-    uint8_t SF : 1;
-    uint8_t IF : 1;
-    uint8_t OF : 1;
+  union {
+    uint32_t eflags;
+    struct {
+      uint8_t CF : 1;
+      uint8_t ign_1 : 5;
+      uint8_t ZF : 1;
+      uint8_t SF : 1;
+      uint8_t ign_8 : 1;
+      uint8_t IF : 1;
+      uint8_t ign_10 : 1;
+      uint8_t OF : 1;
+    };
   };
 
   vaddr_t eip;

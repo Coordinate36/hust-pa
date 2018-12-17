@@ -2,13 +2,17 @@
 #include "cpu/cc.h"
 
 make_EHelper(test) {
-  TODO();
+  rtl_and(&id_dest->val, &id_dest->val, &id_src->val);
+  cpu.OF = cpu.CF = 0;
+  cpu.ZF = id_dest->val == 0 ? 1 : 0;
+  cpu.SF = id_dest->val >> ((id_dest->width << 3) - 1);
 
   print_asm_template2(test);
 }
 
 make_EHelper(and) {
-  TODO();
+  rtl_and(&id_dest->val, &id_dest->val, &id_dest->val);
+  operand_write(id_dest, &id_dest->val);
 
   print_asm_template2(and);
 }
