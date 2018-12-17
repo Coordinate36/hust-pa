@@ -187,6 +187,10 @@ make_DHelper(r) {
   decode_op_r(eip, id_dest, true);
 }
 
+make_DHelper(pop_r) {
+  decode_op_r(eip, id_dest, false);
+}
+
 make_DHelper(E) {
   decode_op_rm(eip, id_dest, true, NULL, false);
 }

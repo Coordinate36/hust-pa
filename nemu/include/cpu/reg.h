@@ -52,6 +52,11 @@ typedef struct {
 
 extern CPU_state cpu;
 
+#define infer_CF (cpu.CF)
+#define infer_ZF (cpu.ZF)
+#define infer_SF (cpu.SF)
+#define infer_OF (cpu.OF)
+
 static inline int check_reg_index(int index) {
   assert(index >= 0 && index < 8);
   return index;
