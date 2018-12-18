@@ -18,14 +18,19 @@ void rtl_setcc(rtlreg_t* dest, uint8_t subcode) {
     case CC_O:
     case CC_B:
     case CC_E: {
-      *dest = cpu.ZF == 1 ? 1 : 0;
+      *dest = cpu.ZF == 1;
       break;
     }
     case CC_BE:
     case CC_S:
-    case CC_L:
-    case CC_LE:
-      TODO();
+    case CC_L: {
+      *dest = cpu.SF != cpu.OF;
+      break;
+    }
+    case CC_LE: {
+      *dest = cpu.ZF == 1 || cpu.SF != cpu.OF;
+      break;
+    }
     default: panic("should not reach here");
     case CC_P: panic("n86 does not have PF");
   }

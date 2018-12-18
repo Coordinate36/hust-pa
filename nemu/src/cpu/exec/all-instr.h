@@ -19,6 +19,7 @@ make_EHelper(sar);
 make_EHelper(shl);
 make_EHelper(dec);
 make_EHelper(not);
+make_EHelper(inc);
 
 make_EHelper(setcc);
 
