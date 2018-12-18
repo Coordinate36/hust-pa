@@ -27,6 +27,7 @@ make_EHelper(idiv);
 make_EHelper(setcc);
 
 make_EHelper(jcc);
+make_EHelper(jmp);
 make_EHelper(ret);
 make_EHelper(leave);
 
