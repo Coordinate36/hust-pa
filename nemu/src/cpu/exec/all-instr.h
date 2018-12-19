@@ -13,6 +13,7 @@ make_EHelper(add);
 make_EHelper(sub);
 make_EHelper(xor);
 make_EHelper(or);
+make_EHelper(neg);
 make_EHelper(and);
 make_EHelper(cmp);
 make_EHelper(test);
