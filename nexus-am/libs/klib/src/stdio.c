@@ -21,10 +21,6 @@ int num2str(char* out, int num) {
   return r;
 }
 
-int printf(const char *fmt, ...) {
-  return 0;
-}
-
 int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
   int num;
   char* start = out;
@@ -61,6 +57,22 @@ int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
     end[-1] = '\0';
   }
   return start - out;
+}
+
+int printf(const char *fmt, ...) {
+  char buf[1024];
+  va_list args;
+  int i;
+
+  va_start(args, fmt);
+  i = vsnprintf(buf, 1024, fmt, args);
+  va_end(args);
+
+  for (char* p = buf; *p != '\0'; p++) {
+    _putc(*p);
+  }
+
+  return i;
 }
 
 int vsprintf(char *out, const char *fmt, va_list ap) {
