@@ -40,6 +40,21 @@ make_EHelper(or) {
   print_asm_template2(or);
 }
 
+make_EHelper(rol) {
+  t0 = id_src->val % 32;
+  rtl_shl(&t1, &id_dest->val, &t0);
+  t2 = (id_dest->width << 3) - t0;
+  rtl_shl(&t3, &id_dest->val, &t2);
+  rtl_shl(&t3, &t3, &t2);
+  t1 |= t3;
+
+  rtl_update_ZFSF(&t1, id_dest->width);
+  operand_write(id_dest, &t1);
+  // unnecessary to update CF and OF in NEMU
+
+  print_asm_template2(shr);
+}
+
 make_EHelper(sar) {
   rtl_sar(&id_dest->val, &id_dest->val, &id_src->val);
   rtl_update_ZFSF(&id_dest->val, id_dest->width);
