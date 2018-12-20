@@ -74,7 +74,7 @@ void difftest_step(uint32_t eip) {
   for (int i = 0; i < 8; i++) {
     if (cpu.gpr[i]._32 != ref_r.gpr[i]._32) {
       nemu_state = NEMU_ABORT;
-      Log("cpu.grp[%d]: %d, ref_r.grp[%d]: %d\n", i, cpu.gpr[i]._32, i, ref_r.gpr[i]._32);
+      Log("cpu.grp[%d]: %u, ref_r.grp[%d]: %u\n", i, cpu.gpr[i]._32, i, ref_r.gpr[i]._32);
       break;
     }
   }

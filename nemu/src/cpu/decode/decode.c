@@ -189,12 +189,6 @@ make_DHelper(call_I) {
   decoding.jmp_eip = id_dest->simm + *eip;
 }
 
-make_DHelper(cmp_I) {
-  decode_op_I(eip, id_src, true);
-  id_dest->val = cpu.eax;
-  id_dest->width = id_src->width;
-}
-
 make_DHelper(r) {
   decode_op_r(eip, id_dest, true);
 }

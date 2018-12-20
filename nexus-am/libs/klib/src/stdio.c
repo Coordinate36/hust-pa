@@ -6,19 +6,20 @@
 
 int num2str(char* out, int num) {
   char* end = out;
-  char tmp;
   while (num) {
     *end++ = num % 10 + '0';
     num /= 10;
   }
-  int r = end - out;
-  end--;
-  while (out < end) {
-    tmp = *out;
-    *out++ = *end;
+  return end - out;
+}
+
+void reverse(char* begin, char* end) {
+  char tmp;
+  while (begin < end) {
+    tmp = *begin;
+    *begin++ = *end;
     *end-- = tmp;
   }
-  return r;
 }
 
 int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
@@ -38,18 +39,32 @@ int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
       continue;
     }
     fmt++;
-    switch (*fmt++) {
-      case 'd': {
-        num = va_arg(ap, int);
-        start += num2str(start, num);
-        break;
+    if (*fmt == 'd') {
+      num = va_arg(ap, int);
+      int r = num2str(start, num);
+      reverse(start, start + r - 1);
+      start += r;
+    } else if (*fmt == 's') {
+      str = va_arg(ap, char*);
+      while (start < end && (*start++ = *str++) != '\0');
+    } else if (*fmt >= '0' && *fmt <= '9') {
+      int n = 0;
+      while (*fmt >= '0' && *fmt <= '9') {
+        n *= 10;
+        n += *fmt - '0';
+        fmt++;
       }
-      case 's': {
-        str = va_arg(ap, char*);
-        while (start < end && (*start++ = *str++) != '\0');
-        break;
+      if (*fmt == 'd') {
+        num = va_arg(ap, int);
+        int r = num2str(start, num);
+        for (; r < n; r++) {
+          start[r] = ' ';
+        }
+        reverse(start, start + n - 1);
+        start = start + n;
       }
     }
+    fmt++;
   }
   if (start < end) {
     start[0] = '\0';
