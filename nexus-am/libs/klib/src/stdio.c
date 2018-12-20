@@ -47,6 +47,7 @@ int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
     } else if (*fmt == 's') {
       str = va_arg(ap, char*);
       while (start < end && (*start++ = *str++) != '\0');
+      start--;
     } else if (*fmt >= '0' && *fmt <= '9') {
       int n = 0;
       while (*fmt >= '0' && *fmt <= '9') {
