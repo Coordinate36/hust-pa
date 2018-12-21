@@ -4,7 +4,7 @@
 
 #if !defined(__ISA_NATIVE__) || defined(__NATIVE_USE_KLIB__)
 
-int num2str(char* out, int num) {
+int num2str(char* out, uint32_t num) {
   char* end = out;
   do {
     *end++ = num % 10 + '0';
@@ -13,7 +13,7 @@ int num2str(char* out, int num) {
   return end - out;
 }
 
-int hex2str(char* out, int num) {
+int hex2str(char* out, uint32_t num) {
   char* end = out;
   do {
     *end = num % 16;
