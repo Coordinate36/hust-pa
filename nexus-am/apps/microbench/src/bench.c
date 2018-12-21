@@ -95,14 +95,7 @@ int main() {
     }
   }
 
-  printf("before divide:%d, after divide:%d, test:%d\n", bench_score, bench_score / 10, (unsigned)1346 / 10);
   bench_score /= sizeof(benchmarks) / sizeof(benchmarks[0]);
-  printf("bench_score:%d\n", bench_score);
-
-  bench_score = 3093;
-  printf("before divide:%d, after divide:%d, test:%d\n", bench_score, bench_score / 10, (unsigned)1346 / 10);
-  bench_score /= sizeof(benchmarks) / sizeof(benchmarks[0]);
-  printf("bench_score:%d\n", bench_score);
   
   printf("==================================================\n");
   printf("MicroBench %s", pass ? "PASS" : "FAIL");
