@@ -6,10 +6,21 @@
 
 int num2str(char* out, int num) {
   char* end = out;
-  while (num) {
+  do {
     *end++ = num % 10 + '0';
     num /= 10;
-  }
+  } while (num);
+  return end - out;
+}
+
+int hex2str(char* out, int num) {
+  char* end = out;
+  do {
+    *end = num % 16;
+    *end += *end < 10 ? '0' : ('a' - 10);
+    end++;
+    num /= 16;
+  } while (num);
   return end - out;
 }
 
@@ -39,9 +50,9 @@ int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
       continue;
     }
     fmt++;
-    if (*fmt == 'd') {
+    if (*fmt == 'd' || *fmt == 'x') {
       num = va_arg(ap, int);
-      int r = num2str(start, num);
+      int r = *fmt == 'd' ? num2str(start, num) : hex2str(start, num);
       reverse(start, start + r - 1);
       start += r;
     } else if (*fmt == 's') {
@@ -55,14 +66,14 @@ int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
         n += *fmt - '0';
         fmt++;
       }
-      if (*fmt == 'd') {
+      if (*fmt == 'd' || *fmt == 'x') {
         num = va_arg(ap, int);
-        int r = num2str(start, num);
+        int r = *fmt == 'd' ? num2str(start, num) : hex2str(start, num);
         for (; r < n; r++) {
           start[r] = ' ';
         }
         reverse(start, start + n - 1);
-        start = start + n;
+        start += n;
       }
     }
     fmt++;
