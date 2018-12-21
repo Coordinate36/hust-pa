@@ -183,12 +183,6 @@ make_DHelper(I) {
   decode_op_I(eip, id_dest, true);
 }
 
-make_DHelper(call_I) {
-  decode_op_SI(eip, id_dest, false);
-  // the target address can be computed in the decode stage
-  decoding.jmp_eip = id_dest->simm + *eip;
-}
-
 make_DHelper(r) {
   decode_op_r(eip, id_dest, true);
 }
@@ -207,10 +201,6 @@ make_DHelper(setcc_E) {
 
 make_DHelper(gp7_E) {
   decode_op_rm(eip, id_dest, false, NULL, false);
-}
-
-make_DHelper(gp5_E) {
-  decoding.jmp_eip = id_dest->val;
 }
 
 /* used by test in group3 */

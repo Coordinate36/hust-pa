@@ -5,6 +5,7 @@ make_EHelper(movsx);
 make_EHelper(movzx);
 make_EHelper(lea);
 make_EHelper(call);
+make_EHelper(call_rm);
 
 make_EHelper(push);
 make_EHelper(pop);
@@ -39,6 +40,7 @@ make_EHelper(out);
 
 make_EHelper(jcc);
 make_EHelper(jmp);
+make_EHelper(jmp_rm);
 make_EHelper(ret);
 make_EHelper(leave);
 
