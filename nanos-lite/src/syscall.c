@@ -11,6 +11,7 @@ _Context* do_syscall(_Context *c) {
 
   switch (a[0]) {
     case SYS_yield: _yield(); rst = 0; break;
+    case SYS_brk: rst = 0; break;
     case SYS_write: {
       char* buf = (char*)a[2];
       if (a[1] == 1 || a[1] == 2) {
