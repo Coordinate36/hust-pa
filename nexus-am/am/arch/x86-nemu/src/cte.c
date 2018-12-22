@@ -12,7 +12,6 @@ _Context* irq_handle(_Context *tf) {
   _Context *next = tf;
   // printf("eax:%d, ebx:%d, ecx:%d, edx:%d, ebp:%d\n", tf->eax, tf->ebx, tf->ecx, tf->edx, tf->ebp);
   // printf("irq:%d, eflags:%d, cs:%d\n", tf->irq, tf->eflags, tf->cs);
-  printf("irq:%d\n", tf->irq);
   if (user_handler) {
     _Event ev = {0};
     switch (tf->irq) {

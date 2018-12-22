@@ -11,6 +11,18 @@ _Context* do_syscall(_Context *c) {
 
   switch (a[0]) {
     case SYS_yield: _yield(); rst = 0; break;
+    case SYS_write: {
+      char* buf = (char*)a[2];
+      if (a[1] == 1 || a[1] == 2) {
+        int i;
+        for (i = 0; i < a[3]; i++) {
+          _putc(buf[i]);
+        }
+        rst = i;
+      }
+      rst = -1;
+      break;
+    }
     case SYS_exit: _halt(a[1]); break;
     default: panic("Unhandled syscall ID = %d", a[0]);
   }
