@@ -20,6 +20,7 @@ void hello_fun(void *arg) {
 }
 
 void init_proc() {
+  naive_uload(current, "dummy");
 }
 
 _Context* schedule(_Context *prev) {
