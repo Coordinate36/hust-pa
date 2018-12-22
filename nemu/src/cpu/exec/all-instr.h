@@ -9,6 +9,8 @@ make_EHelper(call_rm);
 
 make_EHelper(push);
 make_EHelper(pop);
+make_EHelper(pusha);
+make_EHelper(popa);
 
 make_EHelper(add);
 make_EHelper(sub);
@@ -44,7 +46,10 @@ make_EHelper(jcc);
 make_EHelper(jmp);
 make_EHelper(jmp_rm);
 make_EHelper(ret);
+make_EHelper(iret);
 make_EHelper(leave);
+make_EHelper(lidt);
+make_EHelper(int);
 
 make_EHelper(operand_size);
 

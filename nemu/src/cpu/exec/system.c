@@ -5,7 +5,11 @@ void difftest_skip_ref();
 void difftest_skip_dut();
 
 make_EHelper(lidt) {
-  TODO();
+  cpu.idtr.limit = vaddr_read(id_dest->addr, 2);
+  cpu.idtr.base = vaddr_read(id_dest->addr + 2, 4);
+  if (decoding.is_operand_size_16) {
+    cpu.idtr.base &= 0xffffff;
+  }
 
   print_asm_template1(lidt);
 }
@@ -27,7 +31,7 @@ make_EHelper(mov_cr2r) {
 }
 
 make_EHelper(int) {
-  TODO();
+  raise_intr(id_dest->val, *eip);
 
   print_asm("int %s", id_dest->str);
 
@@ -37,7 +41,9 @@ make_EHelper(int) {
 }
 
 make_EHelper(iret) {
-  TODO();
+  rtl_pop(eip);
+  rtl_pop(&cpu.cs);
+  rtl_pop(&cpu.eflags);
 
   print_asm("iret");
 }

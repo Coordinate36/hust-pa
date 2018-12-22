@@ -50,8 +50,12 @@ int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
       continue;
     }
     fmt++;
-    if (*fmt == 'd' || *fmt == 'x') {
+    if (*fmt == 'd' || *fmt == 'x' || *fmt == 'p') {
       num = va_arg(ap, int);
+      if (*fmt == 'p') {
+        *start++ = '0';
+        *start++ = 'x';
+      }
       int r = *fmt == 'd' ? num2str(start, num) : hex2str(start, num);
       reverse(start, start + r - 1);
       start += r;
@@ -66,9 +70,11 @@ int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
         n += *fmt - '0';
         fmt++;
       }
-      if (*fmt == 'd' || *fmt == 'x') {
+      if (*fmt == 'd' || *fmt == 'x' || *fmt == 'p') {
         num = va_arg(ap, int);
         int r = *fmt == 'd' ? num2str(start, num) : hex2str(start, num);
+        start[r++] = 'x';
+        start[r++] = '0';
         for (; r < n; r++) {
           start[r] = ' ';
         }

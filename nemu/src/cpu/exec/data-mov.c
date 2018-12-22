@@ -19,13 +19,44 @@ make_EHelper(pop) {
 }
 
 make_EHelper(pusha) {
-  TODO();
+  uint32_t width = decoding.is_operand_size_16 ? 2 : 4;
+  rtl_lr(&t0, R_ESP, width);
+  rtl_lr(&t1, R_EAX, width);
+  rtl_push(&t1);
+  rtl_lr(&t1, R_ECX, width);
+  rtl_push(&t1);
+  rtl_lr(&t1, R_EDX, width);
+  rtl_push(&t1);
+  rtl_lr(&t1, R_EBX, width);
+  rtl_push(&t1);
+  rtl_push(&t0);
+  rtl_lr(&t1, R_EBP, width);
+  rtl_push(&t1);
+  rtl_lr(&t1, R_ESI, width);
+  rtl_push(&t1);
+  rtl_lr(&t1, R_EDI, width);
+  rtl_push(&t1);
 
   print_asm("pusha");
 }
 
 make_EHelper(popa) {
-  TODO();
+  uint32_t width = decoding.is_operand_size_16 ? 2 : 4;
+  rtl_pop(&t1);
+  rtl_sr(R_EDI, &t1, width);
+  rtl_pop(&t1);
+  rtl_sr(R_ESI, &t1, width);
+  rtl_pop(&t1);
+  rtl_sr(R_EBP, &t1, width);
+  rtl_pop(&t1);
+  rtl_pop(&t1);
+  rtl_sr(R_EBX, &t1, width);
+  rtl_pop(&t1);
+  rtl_sr(R_EDX, &t1, width);
+  rtl_pop(&t1);
+  rtl_sr(R_ECX, &t1, width);
+  rtl_pop(&t1);
+  rtl_sr(R_EAX, &t1, width);
 
   print_asm("popa");
 }
