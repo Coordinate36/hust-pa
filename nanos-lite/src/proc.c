@@ -20,7 +20,7 @@ void hello_fun(void *arg) {
 }
 
 void init_proc() {
-  naive_uload(current, "/bin/text");
+  naive_uload(current, "/bin/events");
 }
 
 _Context* schedule(_Context *prev) {
