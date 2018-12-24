@@ -2,12 +2,14 @@
 #include <x86.h>
 #include <amdev.h>
 
+static uint32_t boot_time;
+
 size_t timer_read(uintptr_t reg, void *buf, size_t size) {
   switch (reg) {
     case _DEVREG_TIMER_UPTIME: {
       _UptimeReg *uptime = (_UptimeReg *)buf;
       uptime->hi = 0;
-      uptime->lo = inl(0x48);
+      uptime->lo = inl(0x48) - boot_time;
       return sizeof(_UptimeReg);
     }
     case _DEVREG_TIMER_DATE: {
@@ -25,4 +27,5 @@ size_t timer_read(uintptr_t reg, void *buf, size_t size) {
 }
 
 void timer_init() {
+  boot_time = inl(0x48);
 }
