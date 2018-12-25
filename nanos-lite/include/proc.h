@@ -26,5 +26,7 @@ size_t ramdisk_write(const void *buf, size_t offset, size_t len);
 size_t get_ramdisk_size();
 
 void naive_uload(PCB *pcb, const char *filename);
+_Context* schedule(_Context *prev);
+void context_kload(PCB *pcb, void *entry);
 
 #endif

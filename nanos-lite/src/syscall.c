@@ -3,7 +3,7 @@
 #include "fs.h"
 #include "proc.h"
 
-_Context* do_syscall(_Context *c) {
+_Context* do_syscall(_Context *c) { 
   uintptr_t a[4];
   a[0] = c->GPR1;
   a[1] = c->GPR2;
