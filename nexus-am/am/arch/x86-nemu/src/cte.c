@@ -8,21 +8,21 @@ void vectrap();
 void vecsys();
 void vecnull();
 
-_Context* irq_handle(_Context *tf) {
-  _Context *next = tf;
-  // printf("eax:%d, ebx:%d, ecx:%d, edx:%d, ebp:%d\n", tf->eax, tf->ebx, tf->ecx, tf->edx, tf->ebp);
-  // printf("irq:%d, eflags:%d, cs:%d\n", tf->irq, tf->eflags, tf->cs);
+_Context* irq_handle(_Context *cp) {
+  _Context *next = cp;
+  // printf("eax:%d, ebx:%d, ecx:%d, edx:%d, ebp:%d\n", cp->eax, cp->ebx, cp->ecx, cp->edx, cp->ebp);
+  // printf("irq:%d, eflags:%d, cs:%d\n", cp->irq, cp->eflags, cp->cs);
   if (user_handler) {
     _Event ev = {0};
-    switch (tf->irq) {
+    switch (cp->irq) {
       case 0x80: ev.event = _EVENT_SYSCALL; break;
       case 0x81: ev.event = _EVENT_YIELD; break;
       default: ev.event = _EVENT_ERROR; break;
     }
 
-    next = user_handler(ev, tf);
+    next = user_handler(ev, cp);
     if (next == NULL) {
-      next = tf;
+      next = cp;
     }
   }
 
