@@ -29,10 +29,45 @@ void paddr_write(paddr_t addr, uint32_t data, int len) {
   }
 }
 
+paddr_t page_translate(paddr_t addr) {
+  if (cpu.cr0.paging == 0) {
+    return addr;
+  }
+  uint32_t kp = cpu.cr3.val & ~0xfff;     // PDE
+  // Log("addr:%d, pde:%d\n", addr, kp);
+  uint32_t idx = addr >> 22;              // dir
+  kp = paddr_read(kp + (idx << 2), 4);    // PTE
+  // Log("addr:%d, pte:%d\n", addr, kp);
+  assert(kp & 1);
+  kp &= ~0xfff;
+  idx = addr << 10 >> 22;                 // page
+  kp = paddr_read(kp + (idx << 2), 4);    // page frame
+  // Log("addr:%d, page frame:%d\n", addr, kp);
+  assert(kp & 1);
+  kp &= ~0xfff;
+  idx = addr & 0xfff;                     // offset
+  return kp + idx;
+}
+
 uint32_t vaddr_read(vaddr_t addr, int len) {
-  return paddr_read(addr, len);
+  if ((addr & 0xfff) + len > 0x1000) {
+    uint32_t shift = (addr & 0xfff) - (0xfff - len);
+    uint32_t paddr_low = page_translate(addr);
+    uint32_t paddr_high = page_translate(addr | 0xfff);
+    return paddr_read(paddr_low, shift) | (paddr_read(paddr_high, len - shift) >> shift);
+  }
+  paddr_t paddr = page_translate(addr);
+  return paddr_read(paddr, len);
 }
 
 void vaddr_write(vaddr_t addr, uint32_t data, int len) {
-  paddr_write(addr, data, len);
+  if ((addr & 0xfff) + len > 0x1000) {
+    uint32_t shift = (addr & 0xfff) - (0xfff - len);
+    uint32_t paddr_low = page_translate(addr);
+    uint32_t paddr_high = page_translate(addr | 0xfff);
+    paddr_write(paddr_low, data, shift);
+    paddr_write(paddr_high, data >> shift, len - shift);
+  }
+  paddr_t paddr = page_translate(addr);
+  paddr_write(paddr, data, len);
 }

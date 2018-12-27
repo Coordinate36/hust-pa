@@ -27,7 +27,6 @@ void init_proc() {
 }
 
 _Context* schedule(_Context *prev) {
-  // Log("%d, %d\n", current == &pcb[0], current == &pcb[1]);
   current->cp = prev;
   current = current == &pcb[0] ? &pcb[1] : &pcb[0];
   return current->cp;
