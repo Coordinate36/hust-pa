@@ -7,6 +7,7 @@ static _Context* (*user_handler)(_Event, _Context*) = NULL;
 void vectrap();
 void vecsys();
 void vecnull();
+void irq0();
 void get_cur_as(_Context *c);
 void _switch(_Context *c);
 
@@ -18,7 +19,8 @@ _Context* irq_handle(_Context *cp) {
     switch (cp->irq) {
       case 0x80: ev.event = _EVENT_SYSCALL; break;
       case 0x81: ev.event = _EVENT_YIELD; break;
-      default: ev.event = _EVENT_ERROR; break;
+      case 0x20: ev.event = _EVENT_IRQ_TIMER; break;
+      default: ev.event = _EVENT_ERROR;
     }
 
     next = user_handler(ev, cp);
@@ -26,6 +28,7 @@ _Context* irq_handle(_Context *cp) {
       next = cp;
     }
   }
+  printf("next->irq:%d, next->eip:%d\n", next->irq, next->eip);
 
   _switch(next);
   return next;
@@ -42,6 +45,7 @@ int _cte_init(_Context*(*handler)(_Event, _Context*)) {
   // -------------------- system call --------------------------
   idt[0x81] = GATE(STS_TG32, KSEL(SEG_KCODE), vectrap, DPL_KERN);
   idt[0x80] = GATE(STS_TG32, KSEL(SEG_KCODE), vecsys, DPL_KERN);
+  idt[0x20] = GATE(STS_TG32, KSEL(SEG_KCODE), irq0, DPL_KERN);
 
   set_idt(idt, sizeof(idt));
 

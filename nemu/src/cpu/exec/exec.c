@@ -1,6 +1,8 @@
 #include "cpu/exec.h"
 #include "all-instr.h"
 
+#define IRQ_TIMER 32
+
 typedef struct {
   DHelper decode;
   EHelper execute;
@@ -234,6 +236,11 @@ void exec_wrapper(bool print_flag) {
 
   decoding.seq_eip = ori_eip;
   exec_real(&decoding.seq_eip);
+
+  if (cpu.INTR & cpu.IF) {
+    cpu.INTR = false;
+    raise_intr(IRQ_TIMER, cpu.eip);
+  }
 
 #ifdef DEBUG
   int instr_len = decoding.seq_eip - ori_eip;
