@@ -37,14 +37,14 @@ paddr_t page_translate(paddr_t addr) {
   uint32_t idx = addr >> 22;              // dir
   kp = paddr_read(kp + (idx << 2), 4);
   if ((kp & 1) == 0) {
-    Log("cpu.cr3.val:%d, addr:%d, kp:%d\n", cpu.cr3.val, addr, kp);
+    Log("cpu.cr3.val:%u, addr:%u, kp:%u\n", cpu.cr3.val, addr, kp);
   }
   assert(kp & 1);
   kp &= ~0xfff;
   idx = addr << 10 >> 22;                 // page
   kp = paddr_read(kp + (idx << 2), 4);    // page frame
   if ((kp & 1) == 0) {
-    Log("cpu.cr3.val:%d, addr:%d, idx:%d, kp:%d\n", cpu.cr3.val, addr, idx, kp);
+    Log("cpu.cr3.val:%u, addr:%u, idx:%u, kp:%u\n", cpu.cr3.val, addr, idx, kp);
   }
   assert(kp & 1);
   kp &= ~0xfff;

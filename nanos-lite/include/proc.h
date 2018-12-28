@@ -29,5 +29,6 @@ void naive_uload(PCB *pcb, const char *filename);
 _Context* schedule(_Context *prev);
 void context_kload(PCB *pcb, void *entry);
 void context_uload(PCB *pcb, const char *filename);
+int mm_brk(uintptr_t new_brk);
 
 #endif

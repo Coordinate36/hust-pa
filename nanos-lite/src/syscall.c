@@ -14,7 +14,7 @@ _Context* do_syscall(_Context *c) {
   switch (a[0]) {
     case SYS_yield: _yield(); rst = 0; break;
     case SYS_execve: naive_uload(NULL, (const char*)a[1]); break;
-    case SYS_brk: rst = 0; break;
+    case SYS_brk: rst = mm_brk(a[1]); break;
     case SYS_lseek: rst = fs_lseek(a[1], a[2], a[3]); break;
     case SYS_write: rst = fs_write(a[1], (void*)a[2], a[3]); break;
     case SYS_read: rst = fs_read(a[1], (void*)a[2], a[3]); break;

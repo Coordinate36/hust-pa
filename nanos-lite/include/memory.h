@@ -14,5 +14,6 @@
 #define PGROUNDDOWN(a)  (((a)) & ~PGMASK)
 
 void* new_page(size_t);
+int _map(_Protect *p, void *va, void *pa, int mode);
 
 #endif
