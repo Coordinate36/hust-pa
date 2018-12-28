@@ -7,11 +7,12 @@ static _Context* (*user_handler)(_Event, _Context*) = NULL;
 void vectrap();
 void vecsys();
 void vecnull();
+void get_cur_as(_Context *c);
+void _switch(_Context *c);
 
 _Context* irq_handle(_Context *cp) {
+  get_cur_as(cp);
   _Context *next = cp;
-  // printf("eax:%d, ebx:%d, ecx:%d, edx:%d, ebp:%d\n", cp->eax, cp->ebx, cp->ecx, cp->edx, cp->ebp);
-  // printf("irq:%d, eflags:%d, cs:%d\n", cp->irq, cp->eflags, cp->cs);
   if (user_handler) {
     _Event ev = {0};
     switch (cp->irq) {
@@ -26,6 +27,7 @@ _Context* irq_handle(_Context *cp) {
     }
   }
 
+  _switch(next);
   return next;
 }
 

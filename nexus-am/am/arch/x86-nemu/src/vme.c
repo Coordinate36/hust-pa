@@ -77,6 +77,14 @@ void _switch(_Context *c) {
 }
 
 int _map(_Protect *p, void *va, void *pa, int mode) {
+  uintptr_t* updir = (uintptr_t*)p->ptr;
+  uintptr_t uptabs = updir[PDX(va)];
+  if ((uptabs & PTE_P) == 0) {
+    updir[PDX(va)] = (intptr_t)pgalloc_usr(1) | PTE_P;
+    uptabs = updir[PDX(va)];
+  }
+  uptabs &= ~0xfff;
+  ((uintptr_t*)uptabs)[PTX(va)] = PTE_ADDR(pa) | PTE_P;
   return 0;
 }
 
@@ -85,6 +93,7 @@ _Context *_ucontext(_Protect *p, _Area ustack, _Area kstack, void *entry, void *
   _Context *c = (_Context*)ustack.end - 1;
   c->cs = 8;
   c->eip = (uintptr_t)entry;
+  c->prot = p;
   
   return c;
 }

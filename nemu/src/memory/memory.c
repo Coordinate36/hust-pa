@@ -35,18 +35,16 @@ paddr_t page_translate(paddr_t addr) {
   }
   uint32_t kp = cpu.cr3.val & ~0xfff;     // PDE
   uint32_t idx = addr >> 22;              // dir
-  kp = paddr_read(kp + (idx << 2), 4);    // PTE
+  kp = paddr_read(kp + (idx << 2), 4);
   if ((kp & 1) == 0) {
-    Log("addr:%d, pde:%d\n", addr, cpu.cr3.val & ~0xfff);
-    Log("addr:%d, pte:%d\n", addr, kp);
+    Log("cpu.cr3.val:%d, addr:%d, kp:%d\n", cpu.cr3.val, addr, kp);
   }
   assert(kp & 1);
   kp &= ~0xfff;
   idx = addr << 10 >> 22;                 // page
   kp = paddr_read(kp + (idx << 2), 4);    // page frame
   if ((kp & 1) == 0) {
-   Log("addr:%d, pde:%d\n", addr, cpu.cr3.val & ~0xfff);
-    Log("addr:%d, page frame:%d\n", addr, kp);
+    Log("cpu.cr3.val:%d, addr:%d, idx:%d, kp:%d\n", cpu.cr3.val, addr, idx, kp);
   }
   assert(kp & 1);
   kp &= ~0xfff;
