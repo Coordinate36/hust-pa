@@ -28,7 +28,6 @@ _Context* irq_handle(_Context *cp) {
       next = cp;
     }
   }
-  printf("next->irq:%d, next->eip:%d\n", next->irq, next->eip);
 
   _switch(next);
   return next;
