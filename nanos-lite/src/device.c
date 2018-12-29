@@ -2,6 +2,8 @@
 #include "fs.h"
 #include <amdev.h>
 
+int fg_pcb = 2;
+
 size_t serial_write(const void *buf, size_t offset, size_t len) {
   for (int i = 0; i < len; i++) {
     _putc(((char*)buf)[i]);
@@ -27,6 +29,9 @@ size_t events_read(void *buf, size_t offset, size_t len) {
   if (key == _KEY_NONE) {
     sprintf(buf, "t %d\n", uptime());
   } else {
+    if (key == 2 || key == 3 || key == 4) {
+      fg_pcb = key;
+    }
     sprintf(buf, "%s %s\n", down ? "kd" : "ku", keyname[key]);
   }
   return strlen(buf);

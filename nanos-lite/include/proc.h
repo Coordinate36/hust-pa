@@ -18,6 +18,7 @@ typedef union {
 } PCB;
 
 extern PCB *current;
+extern int fg_pcb;
 
 size_t ramdisk_read(void *buf, size_t offset, size_t len);
 
