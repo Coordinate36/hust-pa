@@ -2,6 +2,7 @@
 #define __REG_H__
 
 #include "common.h"
+#include "memory/mmu.h"
 
 enum { R_EAX, R_ECX, R_EDX, R_EBX, R_ESP, R_EBP, R_ESI, R_EDI };
 enum { R_AX, R_CX, R_DX, R_BX, R_SP, R_BP, R_SI, R_DI };
@@ -33,10 +34,40 @@ typedef struct {
   };
 
   vaddr_t eip;
+  uint32_t cs;
+  
+  union {
+    uint32_t eflags;
+    struct {
+      uint8_t CF : 1;
+      uint8_t ign_1 : 5;
+      uint8_t ZF : 1;
+      uint8_t SF : 1;
+      uint8_t ign_8 : 1;
+      uint8_t IF : 1;
+      uint8_t ign_10 : 1;
+      uint8_t OF : 1;
+    };
+  };
+
+  struct {
+    uint16_t limit;
+    uint32_t base;
+  }idtr;
+
+  bool INTR;
+
+  CR0 cr0;
+  CR3 cr3;
 
 } CPU_state;
 
 extern CPU_state cpu;
+
+#define infer_CF (cpu.CF)
+#define infer_ZF (cpu.ZF)
+#define infer_SF (cpu.SF)
+#define infer_OF (cpu.OF)
 
 static inline int check_reg_index(int index) {
   assert(index >= 0 && index < 8);

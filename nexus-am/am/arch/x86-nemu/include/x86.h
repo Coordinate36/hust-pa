@@ -106,6 +106,12 @@ static inline void set_idt(GateDesc *idt, int size) {
   __asm__ volatile("lidt (%0)" : : "r"(data));
 }
 
+static inline uint32_t get_cr3(void) {
+  volatile uint32_t val;
+  __asm__ volatile("movl %%cr3, %0" : "=r"(val));
+  return val;
+}
+
 static inline void set_cr3(void *pdir) {
   __asm__ volatile("movl %0, %%cr3" : : "r"(pdir));
 }

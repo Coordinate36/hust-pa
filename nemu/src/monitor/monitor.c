@@ -87,6 +87,9 @@ static inline long load_img() {
 static inline void restart() {
   /* Set the initial instruction pointer. */
   cpu.eip = ENTRY_START;
+  cpu.cs = 8;
+  cpu.eflags = 2;
+  cpu.cr0.val = 0x60000011;
 }
 
 static inline void parse_args(int argc, char *argv[]) {
@@ -123,7 +126,6 @@ static inline void expr_test() {
     for (j = 0; line[j] != ' '; j++);
     sscanf(line, "%d", &ans);
     rst = expr(line + j + 1, &success).int_;
-    Log("ans: %d rst: %d\n", ans, rst);
     assert(success);
     assert(ans == rst);
   }
